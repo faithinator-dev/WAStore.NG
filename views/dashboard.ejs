@@ -1,0 +1,123 @@
+
+
+<header class="bg-white border-b border-gray-200 px-4 h-16 flex items-center justify-between sticky top-0 z-30">
+    <div class="font-bold truncate max-w-[150px] text-emerald-600"><%= vendor.shop_name %></div>
+    <div class="flex gap-4 items-center">
+        <a href="/admin/profile" class="text-xs font-bold text-gray-500 uppercase tracking-widest">Profile</a>
+        <a href="/logout" class="text-xs font-bold text-red-500 uppercase tracking-widest">Logout</a>
+    </div>
+</header>
+<main class="max-w-xl mx-auto w-full p-4 pb-32">
+    <div class="bg-emerald-600 rounded-2xl p-6 text-white mb-8 shadow-lg">
+        <div class="text-xs opacity-80 uppercase font-bold tracking-widest mb-1">Your Store is Live</div>
+        <div class="text-2xl font-black mb-4">Grow your business</div>
+        <div class="flex gap-2">
+            <button onclick="shareToStatus()" class="flex-grow tap-target bg-white text-emerald-600 font-bold text-sm shadow-sm">
+                Share on Status 🤳
+            </button>
+            <button onclick="navigator.clipboard.writeText('<%= storeUrl %>'); showToast();" class="w-12 h-12 flex items-center justify-center bg-emerald-700 rounded-lg">
+                🔗
+            </button>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-3 gap-4 mb-8">
+        <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm text-center">
+            <div class="text-gray-400 text-[10px] uppercase font-bold tracking-widest">Products</div>
+            <div class="text-xl font-black"><%= products.length %></div>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm text-center">
+            <div class="text-gray-400 text-[10px] uppercase font-bold tracking-widest">Page Views</div>
+            <div class="text-xl font-black"><%= vendor.page_views || 0 %></div>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm text-center">
+            <div class="text-gray-400 text-[10px] uppercase font-bold tracking-widest">Total Clicks</div>
+            <div class="text-xl font-black"><%= vendor.total_clicks || 0 %></div>
+        </div>
+    </div>
+
+    <div class="flex gap-4 mb-8">
+        <a href="/admin/add" class="flex-grow tap-target bg-emerald-600 text-white font-bold shadow-md flex items-center justify-center">
+            + Add New Product
+        </a>
+        <a href="/admin/orders" class="flex-grow tap-target bg-white text-emerald-600 border border-emerald-600 font-bold shadow-sm flex items-center justify-center">
+            📦 Manage Orders
+        </a>
+    </div>
+
+    <!-- QR CODE SECTION -->
+    <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm mb-8 text-center">
+        <h4 class="font-bold text-sm mb-4">Your Store QR Code</h4>
+        <% if (qrCodeData) { %>
+            <img src="<%= qrCodeData %>" class="mx-auto w-32 h-32 mb-4">
+            <a href="<%= qrCodeData %>" download="wastore_qr.png" class="text-xs font-bold text-emerald-600 uppercase tracking-widest">Download QR Code</a>
+        <% } %>
+    </div>
+
+    <!-- GOOGLE SHEETS SYNC SECTION -->
+    <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm mb-8">
+        <div class="flex items-center gap-2 mb-4">
+            <span class="text-xl">📊</span>
+            <h4 class="font-bold">Google Sheets Sync</h4>
+        </div>
+        
+        <% if (!vendor.google_tokens) { %>
+            <p class="text-xs text-gray-500 mb-4">Import and manage your products directly from Google Sheets.</p>
+            <a href="/admin/google/auth" class="w-full tap-target bg-blue-600 text-white font-bold flex items-center justify-center">
+                Connect Google Account
+            </a>
+        <% } else { %>
+            <p class="text-xs text-green-600 font-bold mb-4">✓ Google Account Connected</p>
+            <form action="/admin/google/sync" method="POST" class="space-y-4">
+                <div>
+                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-1">Google Sheet ID</label>
+                    <input type="text" name="spreadsheet_id" value="<%= vendor.spreadsheet_id || '' %>" placeholder="Paste your Sheet ID here" class="w-full bg-gray-50 border border-gray-200 p-3 rounded-lg text-sm outline-emerald-600" required>
+                    <p class="text-[9px] text-gray-400 mt-1">You can find this in the URL of your Google Sheet.</p>
+                </div>
+                <button type="submit" class="w-full tap-target bg-blue-600 text-white font-bold flex items-center justify-center">
+                    Sync Products Now
+                </button>
+            </form>
+        <% } %>
+    </div>
+
+    <h3 class="font-bold text-lg mb-4">Product List</h3>
+    <div class="space-y-3">
+        <% if (products.length === 0) { %>
+            <div class="text-center py-12 bg-white rounded-xl border-2 border-dashed border-gray-200">
+                <div class="text-4xl mb-2">📸</div>
+                <p class="text-gray-500">Add your first product to activate your store</p>
+            </div>
+        <% } else { %>
+            <% products.forEach(p => { %>
+                <div class="bg-white p-3 rounded-lg border border-gray-200 flex items-center gap-4 group">
+                    <img src="<%= p.image_url || 'https://via.placeholder.com/400x400/10B981/ffffff?text=Product' %>" class="w-12 h-12 rounded object-cover">
+                    <div class="flex-grow">
+                        <div class="font-bold text-sm leading-tight"><%= p.name %></div>
+                        <div class="text-emerald-600 font-bold">₦<%= p.price.toLocaleString() %></div>
+                    </div>
+                    <div class="text-right flex flex-col gap-1">
+
+                        <span class="text-[10px] px-2 py-0.5 rounded font-bold 
+                            <% if (p.stock_status === 'available') { %>bg-green-100 text-green-700<% } 
+                            else if (p.stock_status === 'very_near') { %>bg-yellow-100 text-yellow-700<% } 
+                            else if (p.stock_status === 'tomorrow') { %>bg-orange-100 text-orange-700<% } 
+                            else { %>bg-red-100 text-red-700<% } %>
+                            ">
+                            <%= p.stock_status === 'available' ? 'Gumtree' : p.stock_status === 'very_near' ? 'Very Near' : p.stock_status === 'tomorrow' ? 'Tomorrow' : 'Out of Stock' %>
+                        </span>
+
+                        <a href="/admin/edit/<%= p.$loki %>" class="text-[10px] font-bold text-gray-400 hover:text-emerald-600 uppercase">Edit / Delete</a>
+                    </div>
+                </div>
+            <% }) %>
+        <% } %>
+    </div>
+</main>
+
+<script>
+    function shareToStatus() {
+        const text = encodeURIComponent("Check out my products on waStore! 🛍️\n\nShop here: <%= storeUrl %>");
+        window.open(`https://wa.me/?text=${text}`);
+    }
+</script>

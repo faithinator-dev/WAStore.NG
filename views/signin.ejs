@@ -1,0 +1,18 @@
+<div class="max-w-md mx-auto w-full px-4 py-20">
+    <h1 class="text-3xl font-bold mb-2">Welcome Back</h1>
+    <p class="text-gray-600 mb-8">Sign in to manage your store.</p>
+    <form action="/signin" method="POST" class="space-y-4">
+        <div>
+            <label class="block text-sm font-bold mb-1">WhatsApp Number</label>
+            <input type="tel" name="whatsapp" placeholder="2348012345678" required class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
+        </div>
+        <div>
+            <label class="block text-sm font-bold mb-1">Password</label>
+            <input type="password" name="password" required placeholder="••••••••" class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
+        </div>
+        <button type="submit" class="w-full tap-target bg-emerald-600 text-white font-bold text-lg mt-4 shadow-lg">Sign In</button>
+    </form>
+    <p class="text-center mt-6 text-sm text-gray-500">
+        Don't have a store? <a href="/signup" class="text-emerald-600 font-bold">Create one now</a>
+    </p>
+</div>
