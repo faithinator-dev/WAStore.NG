@@ -40,8 +40,18 @@ exports.sendResetEmail = async (to, resetUrl) => {
     console.log(`To: ${to}`);
     console.log(`Reset URL: ${resetUrl}`);
     console.log('--------------------------------');
-    return; // Don't try to send real mail in dev unless configured
+    return;
   }
 
-  return transporter.sendMail(mailOptions);
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log('✅ Email sent successfully:', info.messageId);
+    return info;
+  } catch (error) {
+    console.error('❌ Mail Error:', error.message);
+    if (error.code === 'EAUTH') {
+      console.error('Authentication failed. Please check your EMAIL_USER and EMAIL_PASS (App Password might be required).');
+    }
+    throw error; // Re-throw to be handled by the route's next(err)
+  }
 };
