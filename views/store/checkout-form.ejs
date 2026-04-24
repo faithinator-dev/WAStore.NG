@@ -1,0 +1,134 @@
+<div class="bg-white sticky-top shadow-sm border-bottom">
+  <div class="container py-3 d-flex align-items-center">
+    <a href="/store/<%= store.slug %>/cart" class="btn btn-light rounded-pill border py-2 me-3">
+      <i class="fa fa-arrow-left"></i>
+    </a>
+    <h5 class="mb-0 fw-bold">Order Checkout</h5>
+  </div>
+</div>
+
+<div class="container py-4 mb-5" style="max-width: 650px;">
+  <form id="checkout-form">
+    <!-- Step 1: Delivery Info -->
+    <div class="card border-0 shadow-sm p-4 mb-4">
+      <h5 class="fw-bold mb-4"><i class="fa fa-truck text-wa me-2"></i> Delivery Details</h5>
+      
+      <div class="mb-3">
+        <label class="form-label fw-bold small">FULL NAME</label>
+        <input type="text" id="fullName" class="form-control form-control-lg bg-light border-0" placeholder="e.g. John Doe" required>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-bold small">WHATSAPP NUMBER</label>
+        <input type="tel" id="phone" class="form-control form-control-lg bg-light border-0" placeholder="e.g. 08012345678" required>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-bold small">STREET ADDRESS</label>
+        <input type="text" id="address" class="form-control form-control-lg bg-light border-0" placeholder="e.g. 123 Showroom Ave" required>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label fw-bold small">CITY</label>
+          <input type="text" id="city" class="form-control form-control-lg bg-light border-0" required>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label fw-bold small">STATE</label>
+          <input type="text" id="state" class="form-control form-control-lg bg-light border-0" required>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Payment Method -->
+    <div class="card border-0 shadow-sm p-4 mb-5">
+      <h5 class="fw-bold mb-4"><i class="fa fa-credit-card text-wa me-2"></i> Payment Method</h5>
+      
+      <div class="list-group">
+        <label class="list-group-item d-flex align-items-center p-3 border-wa-subtle mb-3 rounded-4 cursor-pointer" style="border: 2px solid var(--wa-green); background: var(--wa-light);">
+          <input class="form-check-input me-3" type="radio" name="paymentMethod" value="whatsapp" checked>
+          <div class="flex-grow-1">
+            <div class="fw-bold">Order & Pay via WhatsApp</div>
+            <small class="text-muted">Fastest way to confirm and chat with dealer.</small>
+          </div>
+          <i class="fab fa-whatsapp text-success fs-2 ms-3"></i>
+        </label>
+
+        <label class="list-group-item d-flex align-items-center p-3 border-light-subtle rounded-4 cursor-pointer">
+          <input class="form-check-input me-3" type="radio" name="paymentMethod" value="online">
+          <div class="flex-grow-1">
+            <div class="fw-bold">Pay Now (Naira Card)</div>
+            <small class="text-muted">Secure payment via Paystack gateway.</small>
+          </div>
+          <i class="fa fa-shield-alt text-primary fs-3 ms-3"></i>
+        </label>
+      </div>
+    </div>
+
+    <!-- Sticky Bottom CTA -->
+    <div class="fixed-bottom bg-white p-3 border-top shadow-lg">
+      <div class="container" style="max-width: 650px;">
+        <button type="submit" id="submit-btn" class="btn btn-wa w-100 py-3 fs-5">
+          Place Order Successfully
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<script>
+  document.getElementById('checkout-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
+
+    const cart = Cart.get();
+    const method = document.querySelector('input[name="paymentMethod"]:checked').value;
+    
+    const payload = {
+      buyer: {
+        fullName: document.getElementById('fullName').value,
+        phone: document.getElementById('phone').value,
+        addressLine1: document.getElementById('address').value,
+        city: document.getElementById('city').value,
+        state: document.getElementById('state').value,
+        email: 'customer@wastore.ng'
+      },
+      items: cart.map(i => ({ productId: i.productId, quantity: i.quantity })),
+      deliveryFee: 0
+    };
+
+    try {
+      const endpoint = method === 'whatsapp' ? '/checkout/<%= store.slug %>/whatsapp' : '/checkout/<%= store.slug %>/initiate-payment';
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await response.json();
+
+      if (data.success) {
+        Cart.clear();
+        if (method === 'whatsapp') {
+          window.location.href = data.redirectUrl;
+        } else {
+          window.location.href = data.callbackUrl;
+        }
+      } else {
+        alert(data.message || 'Error processing order');
+        btn.disabled = false;
+        btn.innerText = 'Place Order Successfully';
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Network error. Please try again.');
+      btn.disabled = false;
+      btn.innerText = 'Place Order Successfully';
+    }
+  });
+</script>
+
+<style>
+  .cursor-pointer { cursor: pointer; }
+</style>

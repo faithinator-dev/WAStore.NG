@@ -1,0 +1,36 @@
+<div class="container">
+  <div class="row min-vh-100 align-items-center justify-content-center">
+    <div class="col-md-5">
+      <div class="text-center mb-4">
+        <h1 class="fw-bold text-wa">WaStore</h1>
+        <p class="text-muted">Manage your showroom with ease.</p>
+      </div>
+      
+      <div class="card p-4 p-md-5 shadow">
+        <h2 class="h4 fw-bold mb-4">Welcome Back</h2>
+        
+        <% if (errors) { %>
+          <% errors.forEach(err => { %>
+            <div class="alert alert-danger py-2 small"><%= err.msg %></div>
+          <% }) %>
+        <% } %>
+
+        <form action="/auth/login" method="POST">
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">EMAIL ADDRESS</label>
+            <input type="email" name="email" class="form-control form-control-lg border-light-subtle bg-light" placeholder="e.g. name@company.com" required>
+          </div>
+          <div class="mb-4">
+            <label class="form-label fw-semibold small">PASSWORD</label>
+            <input type="password" name="password" class="form-control form-control-lg border-light-subtle bg-light" placeholder="Enter password" required>
+          </div>
+          <button type="submit" class="btn btn-wa w-100 py-3 mb-3">Login to Dashboard</button>
+        </form>
+        
+        <p class="text-center text-muted small mb-0">
+          New here? <a href="/auth/signup" class="text-wa fw-bold text-decoration-none">Create a store</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

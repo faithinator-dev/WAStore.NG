@@ -1,0 +1,177 @@
+<div class="container-fluid">
+  <div class="row">
+    <!-- Sidebar -->
+    <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse px-3 pt-4">
+      <div class="mb-5 px-3">
+        <h2 class="fw-bold text-wa mb-0">WaStore</h2>
+        <p class="small text-muted">Admin Panel</p>
+      </div>
+      
+      <div class="nav flex-column">
+        <a class="nav-link-wa active" href="/dashboard">
+          <i class="fa fa-th-large"></i> Overview
+        </a>
+        <a class="nav-link-wa" href="/dashboard/products">
+          <i class="fa fa-box"></i> Inventory
+        </a>
+        <a class="nav-link-wa" href="/dashboard/orders">
+          <i class="fa fa-shopping-bag"></i> Orders
+        </a>
+        <a class="nav-link-wa" href="/dashboard/customers">
+          <i class="fa fa-users"></i> Customers
+        </a>
+        <a class="nav-link-wa" href="/dashboard/settings">
+          <i class="fa fa-cog"></i> Settings
+        </a>
+        
+        <div class="mt-5 pt-5 border-top">
+          <a class="nav-link-wa text-danger" href="#" onclick="document.getElementById('logout-form').submit()">
+            <i class="fa fa-sign-out-alt"></i> Logout
+          </a>
+          <form id="logout-form" action="/auth/logout" method="POST" style="display: none;"></form>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4">
+        <h1 class="h2 fw-bold">Dashboard Overview</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+          <a href="/store/<%= vendor.slug %>" target="_blank" class="btn btn-outline-wa me-2 rounded-pill">
+            <i class="fa fa-external-link me-2"></i> Visit Showroom
+          </a>
+          <a href="/dashboard/products/add" class="btn btn-wa px-4">
+            <i class="fa fa-plus me-2"></i> New Product
+          </a>
+        </div>
+      </div>
+
+      <!-- KPI Stats -->
+      <div class="row g-4 mb-5">
+        <div class="col-md-3">
+          <div class="card p-3 border-0">
+            <div class="d-flex align-items-center">
+              <div class="bg-wa-light p-3 rounded-circle me-3">
+                <i class="fa fa-shopping-cart text-wa"></i>
+              </div>
+              <div>
+                <div class="text-muted small fw-bold">TOTAL ORDERS</div>
+                <div class="h4 fw-bold mb-0"><%= stats.totalOrders %></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card p-3 border-0">
+            <div class="d-flex align-items-center">
+              <div class="bg-primary-subtle p-3 rounded-circle me-3">
+                <i class="fa fa-money-bill-wave text-primary"></i>
+              </div>
+              <div>
+                <div class="text-muted small fw-bold">MONTH REVENUE</div>
+                <div class="h4 fw-bold mb-0">₦<%= stats.monthRevenue.toLocaleString() %></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card p-3 border-0">
+            <div class="d-flex align-items-center">
+              <div class="bg-warning-subtle p-3 rounded-circle me-3">
+                <i class="fa fa-clock text-warning"></i>
+              </div>
+              <div>
+                <div class="text-muted small fw-bold">PENDING</div>
+                <div class="h4 fw-bold mb-0 text-warning"><%= stats.pendingOrders %></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card p-3 border-0">
+            <div class="d-flex align-items-center">
+              <div class="bg-info-subtle p-3 rounded-circle me-3">
+                <i class="fa fa-users text-info"></i>
+              </div>
+              <div>
+                <div class="text-muted small fw-bold">CUSTOMERS</div>
+                <div class="h4 fw-bold mb-0"><%= stats.totalCustomers %></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <!-- Recent Orders -->
+        <div class="col-lg-8">
+          <div class="card p-4 border-0">
+            <h5 class="fw-bold mb-4">Recent Sales Activity</h5>
+            <% if (recentOrders.length > 0) { %>
+              <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                  <thead class="table-light">
+                    <tr class="small fw-bold text-muted">
+                      <th>ORDER REF</th>
+                      <th>CUSTOMER</th>
+                      <th>AMOUNT</th>
+                      <th>STATUS</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% recentOrders.forEach(order => { %>
+                      <tr>
+                        <td class="fw-bold small text-wa"><%= order.orderNumber %></td>
+                        <td>
+                          <div class="fw-bold"><%= order.customer ? order.customer.fullName : 'Guest' %></div>
+                          <div class="small text-muted"><%= order.customer ? order.customer.phone : '' %></div>
+                        </td>
+                        <td class="fw-bold">₦<%= order.total.toLocaleString() %></td>
+                        <td>
+                          <span class="badge rounded-pill <%= order.status === 'pending' ? 'bg-warning-subtle text-warning-emphasis' : 'bg-success-subtle text-success-emphasis' %> p-2 px-3">
+                            <%= order.status.toUpperCase() %>
+                          </span>
+                        </td>
+                      </tr>
+                    <% }) %>
+                  </tbody>
+                </table>
+              </div>
+            <% } else { %>
+              <div class="text-center py-5">
+                <i class="fa fa-receipt fa-3x text-light mb-3"></i>
+                <p class="text-muted">No sales yet. Try sharing your link!</p>
+              </div>
+            <% } %>
+          </div>
+        </div>
+
+        <!-- Store Performance -->
+        <div class="col-lg-4">
+          <div class="card p-4 border-0 bg-wa text-white">
+            <h5 class="fw-bold mb-3">Your Store Link</h5>
+            <p class="small text-white-50">Share this to your WhatsApp Status to start getting orders.</p>
+            <div class="bg-white text-dark p-3 rounded-3 small fw-bold mb-3 text-break shadow-sm">
+              wastore.com/store/<%= vendor.slug %>
+            </div>
+            <button class="btn btn-light w-100 fw-bold rounded-pill py-2" onclick="navigator.clipboard.writeText('wastore.com/store/<%= vendor.slug %>'); alert('Showroom link copied!')">
+              <i class="fa fa-copy me-2"></i> Copy Showroom Link
+            </button>
+          </div>
+          
+          <div class="card p-4 border-0 mt-4 shadow-sm">
+            <h5 class="fw-bold mb-3">Verification</h5>
+            <div class="d-flex align-items-center p-3 bg-light rounded-3">
+              <i class="fa fa-shield-check text-wa fs-2 me-3"></i>
+              <div>
+                <div class="fw-bold">Get Verified</div>
+                <p class="small text-muted mb-0">Increase trust by 40% with a verified badge.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>

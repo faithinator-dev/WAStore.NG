@@ -1,0 +1,63 @@
+<div class="container" style="padding: 2rem 1.5rem; max-width: 800px;">
+  <div style="margin-bottom: 2rem;">
+    <a href="/dashboard" style="color: var(--primary); text-decoration: none; font-weight: 600;">
+      <i class="fa fa-arrow-left"></i> Back to Dashboard
+    </a>
+    <h1 style="margin-top: 1rem;">Edit Product ✏️</h1>
+  </div>
+
+  <div style="background: white; padding: 2rem; border-radius: var(--radius); box-shadow: var(--shadow);">
+    <form action="/dashboard/products/edit/<%= product._id %>" method="POST" enctype="multipart/form-data">
+      <div class="form-group">
+        <label class="form-label">Product Name</label>
+        <input type="text" name="name" class="form-input" value="<%= product.name %>" required>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+        <div class="form-group">
+          <label class="form-label">Price (₦)</label>
+          <input type="number" name="price" class="form-input" value="<%= product.price %>" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Compare at Price (Optional)</label>
+          <input type="number" name="compareAtPrice" class="form-input" value="<%= product.compareAtPrice %>">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Stock Status</label>
+        <select name="stockStatus" class="form-input">
+          <option value="in_stock" <%= product.stockStatus === 'in_stock' ? 'selected' : '' %>>In Stock</option>
+          <option value="sold_out" <%= product.stockStatus === 'sold_out' ? 'selected' : '' %>>Sold Out</option>
+          <option value="pre_order" <%= product.stockStatus === 'pre_order' ? 'selected' : '' %>>Pre-Order</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Update Image</label>
+        <% if (product.primaryImage) { %>
+          <img src="<%= product.primaryImage %>" style="width: 100px; border-radius: 8px; margin-bottom: 1rem;">
+        <% } %>
+        <input type="file" name="image_file" class="form-input" accept="image/*">
+        <p style="margin-top: 0.5rem; font-size: 0.875rem;">Or URL:</p>
+        <input type="text" name="image_url" class="form-input" value="<%= product.primaryImage %>">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <textarea name="description" class="form-input" rows="5"><%= product.description %></textarea>
+      </div>
+
+      <div style="padding-top: 1rem; border-top: 1px solid var(--light-gray); display: flex; gap: 1rem;">
+        <button type="submit" class="btn btn-primary" style="flex: 1;">Save Changes</button>
+        <a href="/dashboard" class="btn btn-outline" style="flex: 1;">Cancel</a>
+      </div>
+    </form>
+    
+    <div style="margin-top: 2rem; padding-top: 2rem; border-top: 2px solid var(--light-gray);">
+      <form action="/dashboard/products/<%= product._id %>?_method=DELETE" method="POST" onsubmit="return confirm('Are you sure you want to delete this product?');">
+        <button type="submit" class="btn" style="width: 100%; color: var(--error); background: #FEE2E2;">Delete Product</button>
+      </form>
+    </div>
+  </div>
+</div>

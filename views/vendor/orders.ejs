@@ -1,0 +1,81 @@
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 fw-bold mb-0">Order Management 🧾</h1>
+    <div class="btn-group shadow-sm rounded-pill overflow-hidden">
+      <button class="btn btn-white border px-3 active">All</button>
+      <button class="btn btn-white border px-3">Pending</button>
+      <button class="btn btn-white border px-3">Delivered</button>
+    </div>
+  </div>
+
+  <div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="bg-light">
+          <tr class="small text-muted fw-bold">
+            <th class="ps-4">ORDER REF</th>
+            <th>DATE</th>
+            <th>CUSTOMER</th>
+            <th>ITEMS</th>
+            <th>TOTAL</th>
+            <th>STATUS</th>
+            <th class="text-end pe-4">ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (orders.length > 0) { %>
+            <% orders.forEach(order => { %>
+              <tr>
+                <td class="ps-4 fw-bold text-wa"><%= order.orderNumber %></td>
+                <td><%= order.createdAt.toLocaleDateString() %></td>
+                <td>
+                  <div class="fw-bold"><%= order.customer ? order.customer.fullName : 'Guest' %></div>
+                  <small class="text-muted"><%= order.customer ? order.customer.phone : '' %></small>
+                </td>
+                <td><span class="badge bg-light text-dark border"><%= order.items.length %> items</span></td>
+                <td class="fw-bold">₦<%= order.total.toLocaleString() %></td>
+                <td>
+                  <span class="badge rounded-pill <%= order.status === 'pending' ? 'bg-warning-subtle text-warning-emphasis' : 'bg-success-subtle text-success-emphasis' %> p-2 px-3">
+                    <%= order.status.toUpperCase() %>
+                  </span>
+                </td>
+                <td class="text-end pe-4">
+                  <div class="dropdown">
+                    <button class="btn btn-light btn-sm rounded-pill border px-3" data-bs-toggle="dropdown">
+                      Manage <i class="fa fa-chevron-down ms-1 small"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
+                      <li>
+                        <form action="/dashboard/orders/<%= order._id %>/status" method="POST">
+                          <input type="hidden" name="_method" value="PATCH">
+                          <input type="hidden" name="status" value="confirmed">
+                          <button class="dropdown-item py-2" type="submit"><i class="fa fa-check text-success me-2"></i> Mark Confirmed</button>
+                        </form>
+                      </li>
+                      <li>
+                        <form action="/dashboard/orders/<%= order._id %>/status" method="POST">
+                          <input type="hidden" name="_method" value="PATCH">
+                          <input type="hidden" name="status" value="delivered">
+                          <button class="dropdown-item py-2" type="submit"><i class="fa fa-truck text-info me-2"></i> Mark Delivered</button>
+                        </form>
+                      </li>
+                      <li><hr class="dropdown-divider"></li>
+                      <li><a class="dropdown-item text-danger py-2" href="#"><i class="fa fa-times me-2"></i> Cancel Order</a></li>
+                    </ul>
+                  </div>
+                </td>
+              </tr>
+            <% }) %>
+          <% } else { %>
+            <tr>
+              <td colspan="7" class="text-center py-5">
+                <i class="fa fa-shopping-basket fa-3x text-light mb-3"></i>
+                <p class="text-muted mb-0">No orders found.</p>
+              </td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

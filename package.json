@@ -1,23 +1,32 @@
 {
-  "name": "wastore-mvp",
+  "name": "wastore-saas",
   "version": "1.0.0",
-  "description": "WhatsApp Product List Store MVP",
-  "main": "server.js",
+  "description": "WhatsApp Multi-Tenant SaaS E-commerce Platform",
+  "main": "app.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node app.js",
+    "dev": "nodemon app.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cloudinary": "^1.41.0",
+    "compression": "^1.7.4",
+    "connect-mongo": "^5.1.0",
     "dotenv": "^16.3.1",
     "ejs": "^3.1.9",
     "express": "^4.18.2",
-    "express-ejs-layouts": "^2.5.1",
     "express-session": "^1.17.3",
+    "express-validator": "^7.0.0",
     "googleapis": "^126.0.1",
-    "lokijs": "^1.5.12",
+    "helmet": "^7.1.0",
+    "method-override": "^3.0.0",
+    "mongoose": "^8.23.1",
+    "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.10.1",
     "qrcode": "^1.5.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
   }
 }

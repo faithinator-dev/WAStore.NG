@@ -1,0 +1,55 @@
+<div class="container" style="padding: 2rem 1.5rem; max-width: 800px;">
+  <div style="margin-bottom: 2rem;">
+    <a href="/dashboard" style="color: var(--primary); text-decoration: none; font-weight: 600;">
+      <i class="fa fa-arrow-left"></i> Back to Dashboard
+    </a>
+    <h1 style="margin-top: 1rem;">Add New Product 📦</h1>
+  </div>
+
+  <div style="background: white; padding: 2rem; border-radius: var(--radius); box-shadow: var(--shadow);">
+    <form action="/dashboard/products/add" method="POST" enctype="multipart/form-data">
+      <div class="form-group">
+        <label class="form-label">Product Name</label>
+        <input type="text" name="name" class="form-input" placeholder="e.g. Vintage Leather Bag" required>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+        <div class="form-group">
+          <label class="form-label">Price (₦)</label>
+          <input type="number" name="price" class="form-input" placeholder="e.g. 15000" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Compare at Price (Optional)</label>
+          <input type="number" name="compareAtPrice" class="form-input" placeholder="e.g. 20000">
+          <small>Shows as a strikethrough "Was" price</small>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Stock Status</label>
+        <select name="stockStatus" class="form-input">
+          <option value="in_stock">In Stock</option>
+          <option value="sold_out">Sold Out</option>
+          <option value="pre_order">Pre-Order</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Product Image</label>
+        <input type="file" name="image_file" class="form-input" accept="image/*">
+        <p style="margin-top: 0.5rem; font-size: 0.875rem;">Or provide a URL:</p>
+        <input type="text" name="image_url" class="form-input" placeholder="https://...">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <textarea name="description" class="form-input" rows="5" placeholder="Tell your customers about this product..."></textarea>
+      </div>
+
+      <div style="padding-top: 1rem; border-top: 1px solid var(--light-gray); display: flex; gap: 1rem;">
+        <button type="submit" class="btn btn-primary" style="flex: 1;">Publish Product</button>
+        <a href="/dashboard" class="btn btn-outline" style="flex: 1;">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>

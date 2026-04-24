@@ -1,0 +1,75 @@
+<div class="bg-white sticky-top shadow-sm border-bottom">
+  <div class="container py-3 d-flex align-items-center">
+    <a href="/store/<%= store.slug %>" class="btn btn-light rounded-pill border py-2 me-3">
+      <i class="fa fa-arrow-left"></i>
+    </a>
+    <h5 class="mb-0 fw-bold"><%= product.name %></h5>
+  </div>
+</div>
+
+<div class="container py-4 mb-5">
+  <div class="row g-4 justify-content-center">
+    <div class="col-lg-10">
+      <div class="card border-0 shadow-lg overflow-hidden p-0">
+        <div class="row g-0">
+          <div class="col-md-6 border-end">
+            <img src="<%= product.primaryImage %>" class="img-fluid h-100 w-100" alt="<%= product.name %>" style="object-fit: cover; min-height: 400px;">
+          </div>
+          <div class="col-md-6 d-flex flex-column">
+            <div class="card-body p-4 p-lg-5">
+              <span class="badge bg-wa-light text-wa mb-3 fw-bold p-2 px-3 rounded-pill"><%= product.category %></span>
+              <h1 class="display-6 fw-bold mb-3"><%= product.name %></h1>
+              
+              <div class="d-flex align-items-center mb-4">
+                <span class="h2 fw-bold text-wa mb-0">₦<%= product.price.toLocaleString() %></span>
+                <% if (product.isOnSale) { %>
+                  <span class="ms-3 text-muted text-decoration-line-through h4 mb-0">₦<%= product.compareAtPrice.toLocaleString() %></span>
+                  <span class="badge bg-danger ms-3 rounded-pill"><%= product.discountPercent %>% OFF</span>
+                <% } %>
+              </div>
+
+              <div class="mb-4">
+                <h6 class="fw-bold mb-2">Description</h6>
+                <p class="text-muted"><%= product.description %></p>
+              </div>
+
+              <div class="bg-light p-3 rounded-4 mb-4">
+                <div class="d-flex align-items-center mb-2">
+                  <i class="fa fa-truck text-wa me-3 fs-5"></i>
+                  <span class="small fw-semibold">Standard delivery across Nigeria</span>
+                </div>
+                <div class="d-flex align-items-center">
+                  <i class="fa fa-shield-check text-wa me-3 fs-5"></i>
+                  <span class="small fw-semibold">Verified and Authentic vehicle/product</span>
+                </div>
+              </div>
+
+              <div class="mt-auto">
+                <% if (product.stockStatus === 'in_stock') { %>
+                  <button class="btn btn-wa w-100 py-3 fs-5" onclick="Cart.add({ productId: '<%= product._id %>', name: '<%= product.name %>', price: <%= product.price %>, image: '<%= product.primaryImage %>' })">
+                    <i class="fa fa-shopping-cart me-2"></i> Add to Cart
+                  </button>
+                <% } else { %>
+                  <button class="btn btn-secondary w-100 py-3 fs-5 disabled" disabled>
+                    Currently Sold Out
+                  </button>
+                <% } %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Mobile Float Nav -->
+<div class="d-md-none position-fixed bottom-0 start-0 w-100 bg-white p-3 border-top shadow z-3">
+  <% if (product.stockStatus === 'in_stock') { %>
+    <button class="btn btn-wa w-100 py-3 fw-bold" onclick="Cart.add({ productId: '<%= product._id %>', name: '<%= product.name %>', price: <%= product.price %>, image: '<%= product.primaryImage %>' })">
+      <i class="fa fa-shopping-cart me-2"></i> Add to Cart — ₦<%= product.price.toLocaleString() %>
+    </button>
+  <% } else { %>
+    <button class="btn btn-secondary w-100 py-3 fw-bold disabled">Sold Out</button>
+  <% } %>
+</div>

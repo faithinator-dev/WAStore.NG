@@ -1,0 +1,86 @@
+<div class="container py-4" style="max-width: 900px;">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 fw-bold mb-0">Store Settings ⚙️</h1>
+    <a href="/dashboard" class="btn btn-light rounded-pill px-4 border">Back</a>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-md-8">
+      <div class="card p-4 border-0 shadow-sm mb-4">
+        <h4 class="fw-bold mb-4">Profile Information</h4>
+        <form action="/dashboard/settings" method="POST">
+          <div class="mb-3">
+            <label class="form-label fw-bold">Business Name</label>
+            <input type="text" name="businessName" class="form-control" value="<%= vendor.businessName %>" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-bold">WhatsApp Phone Number</label>
+            <input type="tel" name="phone" class="form-control" value="<%= vendor.phone %>" required>
+            <div class="form-text small">Include country code (e.g. 234)</div>
+          </div>
+          <div class="mb-4">
+            <label class="form-label fw-bold">Store Tagline</label>
+            <input type="text" name="tagline" class="form-control" value="<%= vendor.storefront.tagline %>" placeholder="e.g. Best car deals in town">
+          </div>
+          
+          <h4 class="fw-bold mt-5 mb-4">Branding & Socials</h4>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label fw-bold">Brand Color</label>
+              <input type="color" name="themeColor" class="form-control form-control-color w-100" value="<%= vendor.storefront.themeColor || '#25D366' %>">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-bold">Store Category</label>
+              <select name="category" class="form-select">
+                <option value="Fashion & Apparel" <%= vendor.storefront.category === 'Fashion & Apparel' ? 'selected' : '' %>>Fashion</option>
+                <option value="Electronics" <%= vendor.storefront.category === 'Electronics' ? 'selected' : '' %>>Electronics</option>
+                <option value="Other" <%= vendor.storefront.category === 'Other' ? 'selected' : '' %>>Other (Cars, etc)</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-bold">Instagram Handle</label>
+              <div class="input-group">
+                <span class="input-group-text">@</span>
+                <input type="text" name="instagram" class="form-control" value="<%= vendor.storefront.socialLinks.instagram %>">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-bold">Twitter Handle</label>
+              <div class="input-group">
+                <span class="input-group-text">@</span>
+                <input type="text" name="twitter" class="form-control" value="<%= vendor.storefront.socialLinks.twitter %>">
+              </div>
+            </div>
+          </div>
+
+          <hr class="my-5">
+          <button type="submit" class="btn btn-wa px-5 py-3 w-100">Save All Changes</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card p-4 border-0 shadow-sm bg-wa text-white">
+        <h4 class="fw-bold mb-3">Store Link</h4>
+        <p class="small text-white-50">Share this link on your WhatsApp status and social media bios.</p>
+        <div class="bg-white text-dark p-3 rounded-3 small fw-bold mb-3 text-break">
+          wastore.com/store/<%= vendor.slug %>
+        </div>
+        <button class="btn btn-light w-100 fw-bold" onclick="navigator.clipboard.writeText('wastore.com/store/<%= vendor.slug %>'); alert('Link copied!');">
+          Copy Link
+        </button>
+      </div>
+      
+      <div class="card p-4 border-0 shadow-sm mt-4">
+        <h5 class="fw-bold mb-3">Verified Status</h5>
+        <div class="d-flex align-items-center">
+          <i class="fa fa-certificate me-2 <%= vendor.isVerified ? 'text-primary' : 'text-light' %> fs-3"></i>
+          <div>
+            <div class="fw-bold small"><%= vendor.isVerified ? 'Verified Vendor' : 'Not Verified' %></div>
+            <div class="small text-muted">Verify your business for ₦5,000.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
