@@ -1,9 +1,19 @@
-<div class="bg-white sticky-top shadow-sm border-bottom">
-  <div class="container py-3 d-flex align-items-center">
-    <a href="/store/<%= store.slug %>" class="btn btn-light rounded-pill border py-2 me-3">
-      <i class="fa fa-arrow-left"></i>
-    </a>
-    <h5 class="mb-0 fw-bold"><%= product.name %></h5>
+<div class="bg-white sticky-top shadow-sm border-bottom nav-wa-glass">
+  <div class="container py-3 d-flex align-items-center justify-content-between">
+    <div class="d-flex align-items-center">
+      <a href="/store/<%= store.slug %>" class="btn btn-light rounded-pill border py-2 me-3 text-vendor-primary">
+        <i class="fa fa-arrow-left"></i>
+      </a>
+      <h5 class="mb-0 fw-bold text-truncate text-vendor-primary" style="max-width: 200px;"><%= product.name %></h5>
+    </div>
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-success rounded-pill px-3" onclick="shareToWhatsApp()">
+        <i class="fab fa-whatsapp me-2"></i> WhatsApp
+      </button>
+      <button class="btn btn-outline-wa rounded-pill px-3" onclick="shareProduct()">
+        <i class="fa fa-share-alt me-2"></i> More
+      </button>
+    </div>
   </div>
 </div>
 
@@ -40,13 +50,13 @@
                 </div>
                 <div class="d-flex align-items-center">
                   <i class="fa fa-shield-check text-wa me-3 fs-5"></i>
-                  <span class="small fw-semibold">Verified and Authentic vehicle/product</span>
+                  <span class="small fw-semibold">Verified and Authentic product</span>
                 </div>
               </div>
 
               <div class="mt-auto">
                 <% if (product.stockStatus === 'in_stock') { %>
-                  <button class="btn btn-wa w-100 py-3 fs-5" onclick="Cart.add({ productId: '<%= product._id %>', name: '<%= product.name %>', price: <%= product.price %>, image: '<%= product.primaryImage %>' })">
+                  <button class="btn btn-wa w-100 py-3 fs-5 shadow-sm" onclick="Cart.add({ productId: '<%= product._id %>', name: '<%= product.name %>', price: <%= product.price %>, image: '<%= product.primaryImage %>' })">
                     <i class="fa fa-shopping-cart me-2"></i> Add to Cart
                   </button>
                 <% } else { %>
@@ -66,10 +76,84 @@
 <!-- Mobile Float Nav -->
 <div class="d-md-none position-fixed bottom-0 start-0 w-100 bg-white p-3 border-top shadow z-3">
   <% if (product.stockStatus === 'in_stock') { %>
-    <button class="btn btn-wa w-100 py-3 fw-bold" onclick="Cart.add({ productId: '<%= product._id %>', name: '<%= product.name %>', price: <%= product.price %>, image: '<%= product.primaryImage %>' })">
+    <button class="btn btn-wa w-100 py-3 fw-bold shadow" onclick="Cart.add({ productId: '<%= product._id %>', name: '<%= product.name %>', price: <%= product.price %>, image: '<%= product.primaryImage %>' })">
       <i class="fa fa-shopping-cart me-2"></i> Add to Cart — ₦<%= product.price.toLocaleString() %>
     </button>
   <% } else { %>
     <button class="btn btn-secondary w-100 py-3 fw-bold disabled">Sold Out</button>
   <% } %>
 </div>
+
+<!-- Structured Data for Google -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org/",
+  "@type": "Product",
+  "name": "<%= product.name %>",
+  "image": "<%= product.primaryImage %>",
+  "description": "<%= description %>",
+  "brand": {
+    "@type": "Brand",
+    "name": "<%= store.businessName %>"
+  },
+  "offers": {
+    "@type": "Offer",
+    "url": "<%= currentUrl %>",
+    "priceCurrency": "NGN",
+    "price": "<%= product.price %>",
+    "availability": "https://schema.org/<%= product.stockStatus === 'in_stock' ? 'InStock' : 'OutOfStock' %>",
+    "itemCondition": "https://schema.org/NewCondition"
+  }
+}
+</script>
+
+<style>
+  :root {
+    --vendor-primary: <%= store.storefront.themeColor || '#25D366' %>;
+  }
+  .nav-wa-glass { 
+    background-color: rgba(255, 255, 255, 0.9) !important; 
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+  }
+  .text-vendor-primary { color: var(--vendor-primary) !important; }
+  .text-wa { color: var(--vendor-primary) !important; }
+  .btn-wa { background-color: var(--vendor-primary); color: white; border: none; }
+  .btn-wa:hover { opacity: 0.9; color: white; }
+  .btn-outline-wa { border-color: var(--vendor-primary); color: var(--vendor-primary); }
+  .btn-outline-wa:hover { background-color: var(--vendor-primary); color: white; }
+  .bg-wa-light { background-color: rgba(37, 211, 102, 0.1) !important; }
+</style>
+
+<script>
+function shareToWhatsApp() {
+  const productName = '<%= product.name.replace(/'/g, "\\'") %>';
+  const businessName = '<%= store.businessName.replace(/'/g, "\\'") %>';
+  const price = '₦<%= product.price.toLocaleString() %>';
+  const url = window.location.href;
+  
+  const message = `Check out this *${productName}* on *${businessName}*! \n\n💰 Price: ${price}\n\n🔗 View here: ${url}`;
+  
+  window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+}
+
+async function shareProduct() {
+  const shareData = {
+    title: '<%= product.name %> | <%= store.businessName %>',
+    text: 'Check out this <%= product.name %> on <%= store.businessName %>! ₦<%= product.price.toLocaleString() %>',
+    url: window.location.href
+  };
+
+  try {
+    if (navigator.share) {
+      await navigator.share(shareData);
+    } else {
+      // Fallback: Copy to clipboard
+      await navigator.clipboard.writeText(window.location.href);
+      alert('Link copied to clipboard! You can now paste and share it.');
+    }
+  } catch (err) {
+    console.log('Error sharing:', err);
+  }
+}
+</script>

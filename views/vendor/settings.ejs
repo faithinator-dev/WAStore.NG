@@ -1,86 +1,173 @@
-<div class="container py-4" style="max-width: 900px;">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3 fw-bold mb-0">Store Settings ⚙️</h1>
-    <a href="/dashboard" class="btn btn-light rounded-pill px-4 border">Back</a>
-  </div>
-
-  <div class="row g-4">
-    <div class="col-md-8">
-      <div class="card p-4 border-0 shadow-sm mb-4">
-        <h4 class="fw-bold mb-4">Profile Information</h4>
-        <form action="/dashboard/settings" method="POST">
-          <div class="mb-3">
-            <label class="form-label fw-bold">Business Name</label>
-            <input type="text" name="businessName" class="form-control" value="<%= vendor.businessName %>" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label fw-bold">WhatsApp Phone Number</label>
-            <input type="tel" name="phone" class="form-control" value="<%= vendor.phone %>" required>
-            <div class="form-text small">Include country code (e.g. 234)</div>
-          </div>
-          <div class="mb-4">
-            <label class="form-label fw-bold">Store Tagline</label>
-            <input type="text" name="tagline" class="form-control" value="<%= vendor.storefront.tagline %>" placeholder="e.g. Best car deals in town">
-          </div>
-          
-          <h4 class="fw-bold mt-5 mb-4">Branding & Socials</h4>
-          <div class="row g-3">
-            <div class="col-md-6">
-              <label class="form-label fw-bold">Brand Color</label>
-              <input type="color" name="themeColor" class="form-control form-control-color w-100" value="<%= vendor.storefront.themeColor || '#25D366' %>">
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-bold">Store Category</label>
-              <select name="category" class="form-select">
-                <option value="Fashion & Apparel" <%= vendor.storefront.category === 'Fashion & Apparel' ? 'selected' : '' %>>Fashion</option>
-                <option value="Electronics" <%= vendor.storefront.category === 'Electronics' ? 'selected' : '' %>>Electronics</option>
-                <option value="Other" <%= vendor.storefront.category === 'Other' ? 'selected' : '' %>>Other (Cars, etc)</option>
-              </select>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-bold">Instagram Handle</label>
-              <div class="input-group">
-                <span class="input-group-text">@</span>
-                <input type="text" name="instagram" class="form-control" value="<%= vendor.storefront.socialLinks.instagram %>">
-              </div>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label fw-bold">Twitter Handle</label>
-              <div class="input-group">
-                <span class="input-group-text">@</span>
-                <input type="text" name="twitter" class="form-control" value="<%= vendor.storefront.socialLinks.twitter %>">
-              </div>
-            </div>
-          </div>
-
-          <hr class="my-5">
-          <button type="submit" class="btn btn-wa px-5 py-3 w-100">Save All Changes</button>
-        </form>
-      </div>
-    </div>
-
-    <div class="col-md-4">
-      <div class="card p-4 border-0 shadow-sm bg-wa text-white">
-        <h4 class="fw-bold mb-3">Store Link</h4>
-        <p class="small text-white-50">Share this link on your WhatsApp status and social media bios.</p>
-        <div class="bg-white text-dark p-3 rounded-3 small fw-bold mb-3 text-break">
-          wastore.com/store/<%= vendor.slug %>
-        </div>
-        <button class="btn btn-light w-100 fw-bold" onclick="navigator.clipboard.writeText('wastore.com/store/<%= vendor.slug %>'); alert('Link copied!');">
-          Copy Link
-        </button>
+<div class="container-fluid">
+  <div class="row">
+    <!-- Sidebar -->
+    <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse px-3 pt-4">
+      <div class="mb-5 px-3">
+        <h2 class="fw-bold text-wa mb-0">WaStore</h2>
+        <p class="small text-muted">Admin Panel</p>
       </div>
       
-      <div class="card p-4 border-0 shadow-sm mt-4">
-        <h5 class="fw-bold mb-3">Verified Status</h5>
-        <div class="d-flex align-items-center">
-          <i class="fa fa-certificate me-2 <%= vendor.isVerified ? 'text-primary' : 'text-light' %> fs-3"></i>
-          <div>
-            <div class="fw-bold small"><%= vendor.isVerified ? 'Verified Vendor' : 'Not Verified' %></div>
-            <div class="small text-muted">Verify your business for ₦5,000.</div>
+      <div class="nav flex-column">
+        <a class="nav-link-wa" href="/dashboard">
+          <i class="fa fa-th-large"></i> Overview
+        </a>
+        <a class="nav-link-wa" href="/dashboard/products">
+          <i class="fa fa-box"></i> Inventory
+        </a>
+        <a class="nav-link-wa" href="/dashboard/orders">
+          <i class="fa fa-shopping-bag"></i> Orders
+        </a>
+        <a class="nav-link-wa" href="/dashboard/customers">
+          <i class="fa fa-users"></i> Customers
+        </a>
+        <a class="nav-link-wa active" href="/dashboard/settings">
+          <i class="fa fa-cog"></i> Settings
+        </a>
+        
+        <div class="mt-5 pt-5 border-top">
+          <a class="nav-link-wa text-danger" href="#" onclick="document.getElementById('logout-form').submit()">
+            <i class="fa fa-sign-out-alt"></i> Logout
+          </a>
+          <form id="logout-form" action="/auth/logout" method="POST" style="display: none;"></form>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4">
+        <div>
+          <h1 class="h2 fw-bold mb-1">Store Settings <i class="fa fa-cog small text-muted"></i></h1>
+          <p class="text-muted small mb-0">Customize your showroom and business details</p>
+        </div>
+        <div class="btn-toolbar mb-2 mb-md-0">
+          <a href="/store/<%= vendor.slug %>" target="_blank" class="btn btn-outline-wa rounded-pill px-4 shadow-sm">
+            <i class="fa fa-external-link me-2"></i> View Live Store
+          </a>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-lg-8">
+          <form action="/dashboard/settings" method="POST">
+            <!-- Profile Info -->
+            <div class="card p-4 border-0 shadow-sm mb-4">
+              <h5 class="fw-bold mb-4">Business Information</h5>
+              
+              <div class="mb-4">
+                <label class="form-label fw-bold text-muted small">BUSINESS NAME</label>
+                <input type="text" name="businessName" class="form-control form-control-lg border-light-subtle bg-light" value="<%= vendor.businessName %>" required>
+              </div>
+
+              <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                  <label class="form-label fw-bold text-muted small">WHATSAPP NUMBER</label>
+                  <div class="input-group input-group-lg">
+                    <span class="input-group-text bg-white border-light-subtle"><i class="fab fa-whatsapp text-success"></i></span>
+                    <input type="tel" name="phone" class="form-control border-light-subtle bg-light" value="<%= vendor.phone %>" required>
+                  </div>
+                  <div class="form-text smaller">Format: 2348012345678</div>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-bold text-muted small">STORE CATEGORY</label>
+                  <% 
+                    const categories = [
+                      'Fashion & Apparel', 'Beauty & Skincare', 'Food & Beverages', 'Groceries & Supermarket',
+                      'Electronics & Gadgets', 'Computers & Accessories', 'Home & Living', 'Health & Wellness',
+                      'Automobiles & Parts', 'Baby & Kids', 'Arts & Crafts', 'Books & Stationery',
+                      'Services & Digital', 'Real Estate', 'Jewelry & Accessories', 'Sports & Outdoors', 'Other'
+                    ];
+                  %>
+                  <select name="category" class="form-select form-select-lg border-light-subtle bg-light">
+                    <% categories.forEach(cat => { %>
+                      <option value="<%= cat %>" <%= vendor.storefront.category === cat ? 'selected' : '' %>><%= cat %></option>
+                    <% }) %>
+                  </select>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label fw-bold text-muted small">STORE TAGLINE</label>
+                <input type="text" name="tagline" class="form-control form-control-lg border-light-subtle bg-light" value="<%= vendor.storefront.tagline %>" placeholder="e.g. Premium Quality Wears at Affordable Prices">
+              </div>
+            </div>
+
+            <!-- Branding & Socials -->
+            <div class="card p-4 border-0 shadow-sm mb-4">
+              <h5 class="fw-bold mb-4">Branding & Socials</h5>
+              
+              <div class="mb-4">
+                <label class="form-label fw-bold text-muted small">THEME COLOR</label>
+                <div class="d-flex align-items-center gap-3">
+                  <input type="color" name="themeColor" class="form-control form-control-color" style="width: 80px; height: 50px;" value="<%= vendor.storefront.themeColor || '#25D366' %>">
+                  <span class="text-muted small">This color will be used for buttons and highlights in your store.</span>
+                </div>
+              </div>
+
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label fw-bold text-muted small">INSTAGRAM HANDLE</label>
+                  <div class="input-group input-group-lg">
+                    <span class="input-group-text bg-white border-light-subtle"><i class="fab fa-instagram text-danger"></i></span>
+                    <input type="text" name="instagram" class="form-control border-light-subtle bg-light" value="<%= vendor.storefront.socialLinks.instagram %>" placeholder="mybusiness">
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-bold text-muted small">TWITTER HANDLE</label>
+                  <div class="input-group input-group-lg">
+                    <span class="input-group-text bg-white border-light-subtle"><i class="fab fa-twitter text-primary"></i></span>
+                    <input type="text" name="twitter" class="form-control border-light-subtle bg-light" value="<%= vendor.storefront.socialLinks.twitter %>" placeholder="mybusiness">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-wa btn-lg w-100 py-3 rounded-pill fw-bold shadow-sm mt-2">
+              <i class="fa fa-save me-2"></i> Save All Changes
+            </button>
+          </form>
+        </div>
+
+        <div class="col-lg-4">
+          <!-- Store Link Card -->
+          <div class="card p-4 border-0 shadow-sm bg-wa text-white mb-4">
+            <h5 class="fw-bold mb-3">Live Showroom Link</h5>
+            <p class="small text-white-50">Share this link to your WhatsApp Status to start receiving orders.</p>
+            <div class="bg-white text-dark p-3 rounded-3 small fw-bold mb-3 text-break shadow-sm">
+              wastore.ng/store/<%= vendor.slug %>
+            </div>
+            <button class="btn btn-light w-100 fw-bold rounded-pill" onclick="navigator.clipboard.writeText('wastore.ng/store/<%= vendor.slug %>'); alert('Showroom link copied!')">
+              <i class="fa fa-copy me-2"></i> Copy Link
+            </button>
+          </div>
+
+          <!-- Trust Card -->
+          <div class="card p-4 border-0 shadow-sm">
+            <h5 class="fw-bold mb-3">Business Trust</h5>
+            <div class="d-flex align-items-center p-3 bg-light rounded-3 mb-3">
+              <div class="me-3">
+                <i class="fa fa-certificate fs-2 <%= vendor.isVerified ? 'text-wa' : 'text-light' %>"></i>
+              </div>
+              <div>
+                <div class="fw-bold small"><%= vendor.isVerified ? 'Verified Vendor' : 'Not Verified' %></div>
+                <p class="smaller text-muted mb-0">Verified vendors receive 3x more orders on average.</p>
+              </div>
+            </div>
+            <% if (!vendor.isVerified) { %>
+              <button class="btn btn-outline-wa w-100 btn-sm rounded-pill fw-bold">Get Verified Badge</button>
+            <% } %>
           </div>
         </div>
       </div>
-    </div>
+    </main>
   </div>
 </div>
+
+<style>
+  .form-control-lg, .form-select-lg {
+    font-size: 1rem;
+  }
+  .smaller {
+    font-size: 0.75rem;
+  }
+</style>

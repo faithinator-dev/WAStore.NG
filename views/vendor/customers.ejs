@@ -1,52 +1,176 @@
-<div class="container-fluid py-4">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3 fw-bold mb-0">Customer Database 👥</h1>
-    <button class="btn btn-outline-wa rounded-pill px-4">
-      <i class="fa fa-download me-2"></i> Export CSV
-    </button>
-  </div>
+<div class="container-fluid">
+  <div class="row">
+    <!-- Sidebar -->
+    <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse px-3 pt-4">
+      <div class="mb-5 px-3">
+        <h2 class="fw-bold text-wa mb-0">WaStore</h2>
+        <p class="small text-muted">Admin Panel</p>
+      </div>
+      
+      <div class="nav flex-column">
+        <a class="nav-link-wa" href="/dashboard">
+          <i class="fa fa-th-large"></i> Overview
+        </a>
+        <a class="nav-link-wa" href="/dashboard/products">
+          <i class="fa fa-box"></i> Inventory
+        </a>
+        <a class="nav-link-wa" href="/dashboard/orders">
+          <i class="fa fa-shopping-bag"></i> Orders
+        </a>
+        <a class="nav-link-wa active" href="/dashboard/customers">
+          <i class="fa fa-users"></i> Customers
+        </a>
+        <a class="nav-link-wa" href="/dashboard/settings">
+          <i class="fa fa-cog"></i> Settings
+        </a>
+        
+        <div class="mt-5 pt-5 border-top">
+          <a class="nav-link-wa text-danger" href="#" onclick="document.getElementById('logout-form').submit()">
+            <i class="fa fa-sign-out-alt"></i> Logout
+          </a>
+          <form id="logout-form" action="/auth/logout" method="POST" style="display: none;"></form>
+        </div>
+      </div>
+    </nav>
 
-  <div class="card border-0 shadow-sm">
-    <div class="table-responsive">
-      <table class="table table-hover align-middle mb-0">
-        <thead class="bg-light">
-          <tr class="small text-muted fw-bold">
-            <th class="ps-4">CUSTOMER NAME</th>
-            <th>WHATSAPP NUMBER</th>
-            <th>EMAIL</th>
-            <th>TOTAL SPENT</th>
-            <th>ORDERS</th>
-            <th class="text-end pe-4">LAST ORDER</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% if (customers.length > 0) { %>
-            <% customers.forEach(customer => { %>
-              <tr>
-                <td class="ps-4">
-                  <div class="fw-bold text-wa"><%= customer.fullName %></div>
-                </td>
-                <td>
-                  <a href="https://wa.me/<%= customer.phone %>" target="_blank" class="text-decoration-none text-dark fw-semibold">
-                    <i class="fab fa-whatsapp text-success me-1"></i> <%= customer.phone %>
-                  </a>
-                </td>
-                <td><%= customer.email || '—' %></td>
-                <td class="fw-bold">₦<%= customer.totalSpend.toLocaleString() %></td>
-                <td><span class="badge bg-wa-light text-wa"><%= customer.totalOrders %> orders</span></td>
-                <td class="text-end pe-4 text-muted small"><%= customer.lastOrderAt ? customer.lastOrderAt.toLocaleDateString() : '—' %></td>
+    <!-- Main Content -->
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4">
+        <div>
+          <h1 class="h2 fw-bold mb-1">Customers <i class="fa fa-users small text-muted"></i></h1>
+          <p class="text-muted small mb-0">Manage your customer relationships and contact details</p>
+        </div>
+        <div class="btn-toolbar mb-2 mb-md-0">
+          <button type="button" class="btn btn-outline-wa rounded-pill px-4 shadow-sm">
+            <i class="fa fa-download me-2"></i> Export CSV
+          </button>
+        </div>
+      </div>
+
+      <!-- Stats & Search -->
+      <div class="row mb-4 g-3">
+        <div class="col-md-8">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body d-flex align-items-center p-3">
+              <div class="input-group">
+                <span class="input-group-text bg-white border-end-0"><i class="fa fa-search text-muted"></i></span>
+                <input type="text" id="customerSearch" class="form-control border-start-0 ps-0" placeholder="Search by name, phone or email...">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card border-0 shadow-sm h-100 bg-wa text-white">
+            <div class="card-body d-flex align-items-center justify-content-between p-3">
+              <div>
+                <div class="small fw-bold opacity-75">TOTAL CUSTOMERS</div>
+                <div class="h3 fw-bold mb-0"><%= customers.length %></div>
+              </div>
+              <i class="fa fa-users fs-1 opacity-25"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm overflow-hidden">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="bg-light">
+              <tr class="small text-muted fw-bold">
+                <th class="ps-4 py-3">CUSTOMER</th>
+                <th>CONTACT INFO</th>
+                <th>PURCHASE HISTORY</th>
+                <th>ACQUISITION</th>
+                <th class="text-end pe-4">LAST ORDER</th>
               </tr>
-            <% }) %>
-          <% } else { %>
-            <tr>
-              <td colspan="6" class="text-center py-5">
-                <i class="fa fa-users fa-3x text-light mb-3"></i>
-                <p class="text-muted mb-0">Your customer list will grow as you receive orders.</p>
-              </td>
-            </tr>
-          <% } %>
-        </tbody>
-      </table>
-    </div>
+            </thead>
+            <tbody id="customerTableBody">
+              <% if (customers.length > 0) { %>
+                <% customers.forEach(customer => { %>
+                  <tr class="customer-row">
+                    <td class="ps-4">
+                      <div class="d-flex align-items-center">
+                        <div class="bg-wa-light text-wa rounded-circle d-flex align-items-center justify-content-center fw-bold me-3" style="width: 40px; height: 40px; font-size: 0.9rem;">
+                          <%= customer.fullName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2) %>
+                        </div>
+                        <div>
+                          <div class="fw-bold text-dark"><%= customer.fullName %></div>
+                          <div class="text-muted smaller"><%= customer.city || 'Location unknown' %></div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="mb-1">
+                        <a href="https://wa.me/<%= customer.phone.replace(/\D/g, '') %>" target="_blank" class="text-decoration-none text-dark small fw-bold">
+                          <i class="fab fa-whatsapp text-success me-1"></i> <%= customer.phone %>
+                        </a>
+                      </div>
+                      <div class="text-muted small">
+                        <i class="fa fa-envelope me-1 smaller"></i> <%= customer.email || 'No email provided' %>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="fw-bold text-dark">₦<%= customer.totalSpend.toLocaleString() %></div>
+                      <div class="badge bg-wa-light text-wa rounded-pill px-2" style="font-size: 0.7rem;">
+                        <%= customer.totalOrders %> Orders
+                      </div>
+                    </td>
+                    <td>
+                      <span class="badge rounded-pill bg-light text-dark border px-2 py-1 small fw-normal">
+                        <%= customer.acquisitionChannel || 'Storefront' %>
+                      </span>
+                    </td>
+                    <td class="text-end pe-4">
+                      <div class="text-dark small"><%= customer.lastOrderAt ? customer.lastOrderAt.toLocaleDateString('en-NG', { day: 'numeric', month: 'short', year: 'numeric' }) : '—' %></div>
+                      <div class="text-muted smaller" style="font-size: 0.7rem;">
+                        <%= customer.lastOrderAt ? 'Last seen ' + Math.floor((new Date() - customer.lastOrderAt) / (1000 * 60 * 60 * 24)) + ' days ago' : '' %>
+                      </div>
+                    </td>
+                  </tr>
+                <% }) %>
+              <% } else { %>
+                <tr>
+                  <td colspan="5" class="text-center py-5">
+                    <div class="py-4">
+                      <i class="fa fa-users fa-4x text-light mb-3"></i>
+                      <h5 class="text-muted">No customers yet</h5>
+                      <p class="text-muted small">Share your store link to start getting orders and building your list.</p>
+                      <button class="btn btn-wa mt-2 rounded-pill px-4" onclick="navigator.clipboard.writeText('wastore.com/store/<%= vendor.slug %>'); alert('Link copied!')">Copy Store Link</button>
+                    </div>
+                  </td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
   </div>
 </div>
+
+<style>
+  .smaller {
+    font-size: 0.8rem;
+  }
+  .table thead th {
+    letter-spacing: 0.05em;
+    font-size: 0.75rem;
+    background-color: #f8f9fa;
+  }
+  .bg-wa-light {
+    background-color: #DCF8C6 !important;
+  }
+</style>
+
+<script>
+  // Instant Search Logic
+  document.getElementById('customerSearch').addEventListener('input', function(e) {
+    const term = e.target.value.toLowerCase();
+    const rows = document.querySelectorAll('.customer-row');
+    
+    rows.forEach(row => {
+      const content = row.innerText.toLowerCase();
+      row.style.display = content.includes(term) ? '' : 'none';
+    });
+  });
+</script>

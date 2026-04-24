@@ -44,12 +44,21 @@ const vendorSchema = new mongoose.Schema(
         type: String,
         enum: [
           'Fashion & Apparel',
-          'Food & Beverages',
-          'Electronics',
           'Beauty & Skincare',
+          'Food & Beverages',
+          'Groceries & Supermarket',
+          'Electronics & Gadgets',
+          'Computers & Accessories',
           'Home & Living',
           'Health & Wellness',
-          'Art & Crafts',
+          'Automobiles & Parts',
+          'Baby & Kids',
+          'Arts & Crafts',
+          'Books & Stationery',
+          'Services & Digital',
+          'Real Estate',
+          'Jewelry & Accessories',
+          'Sports & Outdoors',
           'Other',
         ],
         default: 'Other',
@@ -79,6 +88,8 @@ const vendorSchema = new mongoose.Schema(
     // --- Account Status ---
     isActive: { type: Boolean, default: true },
     lastLoginAt: { type: Date, default: null },
+    resetPasswordToken: { type: String, default: null },
+    resetPasswordExpires: { type: Date, default: null },
 
     // --- Payment Credentials (encrypted / server-side only) ---
     paystackSubAccountCode: { type: String, default: null, select: false },

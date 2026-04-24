@@ -137,16 +137,20 @@
 
 <!-- Styles -->
 <style>
-    .text-wa { color: #25D366 !important; }
-    .bg-wa { background-color: #25D366 !important; }
+    :root {
+        --vendor-primary: <%= vendor.storefront.themeColor || '#25D366' %>;
+        --vendor-dark: <%= vendor.storefront.themeColor ? 'darken(' + vendor.storefront.themeColor + ', 10%)' : '#075E54' %>;
+    }
+    .text-wa { color: var(--vendor-primary) !important; }
+    .bg-wa { background-color: var(--vendor-primary) !important; }
     .btn-wa {
-        background-color: #25D366;
+        background-color: var(--vendor-primary);
         color: white;
         border: none;
         font-weight: 600;
     }
     .btn-wa:hover {
-        background-color: #075E54;
+        opacity: 0.9;
         color: white;
     }
     .product-image-container {
@@ -160,6 +164,9 @@
     }
     .form-select-sm {
         font-size: 0.875rem;
+    }
+    .border-wa {
+        border-color: var(--vendor-primary) !important;
     }
 </style>
 

@@ -1,10 +1,10 @@
 <!-- Store Navbar -->
-<nav class="navbar navbar-dark nav-wa sticky-top">
+<nav class="navbar navbar-light sticky-top nav-wa-glass">
   <div class="container">
-    <a class="navbar-brand fw-bold" href="#">
+    <a class="navbar-brand fw-bold text-vendor-primary" href="#">
       <%= store.businessName %>
     </a>
-    <a href="/store/<%= store.slug %>/cart" class="btn btn-wa position-relative">
+    <a href="/store/<%= store.slug %>/cart" class="btn btn-wa position-relative rounded-pill">
       <i class="fa fa-shopping-cart"></i>
       <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cart-count">0</span>
     </a>
@@ -17,8 +17,8 @@
     <% if (store.storefront.logoUrl) { %>
       <img src="<%= store.storefront.logoUrl %>" alt="Logo" class="mb-3" style="max-height: 100px;">
     <% } %>
-    <h1 class="display-5 fw-bold"><%= store.businessName %></h1>
-    <p class="lead text-muted"><%= store.storefront.tagline %></p>
+    <h1 class="display-5 fw-bold text-vendor-primary"><%= store.businessName %></h1>
+    <p class="lead text-vendor-primary opacity-75"><%= store.storefront.tagline %></p>
   </div>
 </header>
 
@@ -27,7 +27,7 @@
   <div class="row mb-4 justify-content-center">
     <div class="col-md-6">
       <form action="/store/<%= store.slug %>" method="GET" class="input-group">
-        <input type="text" name="search" class="form-control form-control-lg border-wa" placeholder="Search cars..." value="<%= search %>">
+        <input type="text" name="search" class="form-control form-control-lg border-wa" placeholder="Search Product..." value="<%= search %>">
         <button class="btn btn-wa px-4" type="submit"><i class="fa fa-search"></i></button>
       </form>
     </div>
@@ -63,8 +63,8 @@
       <% }) %>
     <% } else { %>
       <div class="col-12 text-center py-5">
-        <i class="fa fa-car-side fa-4x text-light mb-3"></i>
-        <p class="h4 text-muted">No vehicles available at the moment.</p>
+        <i class="fa fa-shopping-basket fa-4x text-light mb-3"></i>
+        <p class="h4 text-muted">No products available at the moment.</p>
       </div>
     <% } %>
   </div>
@@ -74,9 +74,25 @@
   <p class="text-muted small">&copy; 2026 <%= store.businessName %> | Powered by WaStore</p>
 </footer>
 
+<style>
+  :root {
+    --vendor-primary: <%= store.storefront.themeColor || '#25D366' %>;
+  }
+  .nav-wa-glass { 
+    background-color: rgba(255, 255, 255, 0.9) !important; 
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+  }
+  .text-vendor-primary { color: var(--vendor-primary) !important; }
+  .text-wa { color: var(--vendor-primary) !important; }
+  .btn-wa { background-color: var(--vendor-primary); color: white; border: none; }
+  .btn-wa:hover { opacity: 0.9; color: white; }
+  .border-wa { border-color: var(--vendor-primary) !important; }
+</style>
+
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     const items = Cart.get();
-    document.getElementById('cart-count').innerText = items.length;
+    document.getElementById('cart-count').innerText = items ? items.length : 0;
   });
 </script>

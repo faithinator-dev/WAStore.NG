@@ -4,8 +4,10 @@
  */
 
 const express = require('express');
+const crypto = require('crypto');
 const router = express.Router();
 const Vendor = require('../models/Vendor');
+const { sendResetEmail } = require('../utils/mail');
 
 // ── GET /auth/signup ──────────────────────────────────────────────────────────
 router.get('/signup', (req, res) => {
@@ -100,6 +102,96 @@ router.post('/login', async (req, res) => {
     console.error('Login error:', err);
     res.render('auth/login', {
       title: 'Log In to WaStore',
+      errors: [{ msg: 'Something went wrong. Please try again.' }],
+    });
+  }
+});
+
+// ── GET /auth/forgot-password ────────────────────────────────────────────────
+router.get('/forgot-password', (req, res) => {
+  res.render('auth/forgot-password', { title: 'Forgot Password', errors: null });
+});
+
+// ── POST /auth/forgot-password ───────────────────────────────────────────────
+router.post('/forgot-password', async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    const vendor = await Vendor.findOne({ email });
+
+    if (!vendor) {
+      return res.render('auth/forgot-password', {
+        title: 'Forgot Password',
+        errors: [{ msg: 'No account found with that email address.' }],
+      });
+    }
+
+    // Generate reset token
+    const token = crypto.randomBytes(32).toString('hex');
+    vendor.resetPasswordToken = token;
+    vendor.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+    await vendor.save();
+
+    // Send Email
+    const resetUrl = `${req.protocol}://${req.get('host')}/auth/reset-password/${token}`;
+    await sendResetEmail(vendor.email, resetUrl);
+
+    req.session.flashSuccess = 'A reset link has been sent to your email.';
+    res.redirect('/auth/login');
+  } catch (err) {
+    console.error('Forgot password error:', err);
+    res.render('auth/forgot-password', {
+      title: 'Forgot Password',
+      errors: [{ msg: 'Something went wrong. Please try again.' }],
+    });
+  }
+});
+
+// ── GET /auth/reset-password/:token ─────────────────────────────────────────
+router.get('/reset-password/:token', async (req, res) => {
+  try {
+    const vendor = await Vendor.findOne({
+      resetPasswordToken: req.params.token,
+      resetPasswordExpires: { $gt: Date.now() },
+    });
+
+    if (!vendor) {
+      req.session.flashError = 'Password reset token is invalid or has expired.';
+      return res.redirect('/auth/forgot-password');
+    }
+
+    res.render('auth/reset-password', { title: 'Reset Password', token: req.params.token, errors: null });
+  } catch (err) {
+    res.redirect('/auth/forgot-password');
+  }
+});
+
+// ── POST /auth/reset-password/:token ────────────────────────────────────────
+router.post('/reset-password/:token', async (req, res, next) => {
+  try {
+    const { password } = req.body;
+    const vendor = await Vendor.findOne({
+      resetPasswordToken: req.params.token,
+      resetPasswordExpires: { $gt: Date.now() },
+    });
+
+    if (!vendor) {
+      req.session.flashError = 'Password reset token is invalid or has expired.';
+      return res.redirect('/auth/forgot-password');
+    }
+
+    // Update password and clear reset fields
+    vendor.passwordHash = password; // Pre-save hook will hash it
+    vendor.resetPasswordToken = null;
+    vendor.resetPasswordExpires = null;
+    await vendor.save();
+
+    req.session.flashSuccess = 'Your password has been reset successfully. Please login.';
+    res.redirect('/auth/login');
+  } catch (err) {
+    console.error('Reset password error:', err);
+    res.render('auth/reset-password', {
+      title: 'Reset Password',
+      token: req.params.token,
       errors: [{ msg: 'Something went wrong. Please try again.' }],
     });
   }

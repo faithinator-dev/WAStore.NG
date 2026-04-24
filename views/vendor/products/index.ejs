@@ -1,62 +1,128 @@
-<div class="container-fluid py-4">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-      <h1 class="h3 fw-bold mb-0">My Inventory 📦</h1>
-      <p class="text-muted small">You have <%= products.length %> products in your showroom.</p>
-    </div>
-    <a href="/dashboard/products/add" class="btn btn-wa rounded-pill px-4">
-      <i class="fa fa-plus me-2"></i> Add New Product
-    </a>
-  </div>
-
-  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
-    <% if (products.length > 0) { %>
-      <% products.forEach(product => { %>
-        <div class="col">
-          <div class="card h-100 border-0 shadow-sm overflow-hidden">
-            <div class="position-relative">
-              <img src="<%= product.primaryImage %>" class="card-img-top" alt="<%= product.name %>" style="aspect-ratio: 4/3; object-fit: cover;">
-              <div class="position-absolute top-0 end-0 m-2">
-                <span class="badge rounded-pill <%= product.stockStatus === 'in_stock' ? 'bg-success' : 'bg-danger' %>">
-                  <%= product.stockStatus.replace('_', ' ').toUpperCase() %>
-                </span>
-              </div>
-            </div>
-            <div class="card-body">
-              <h5 class="card-title fw-bold text-truncate"><%= product.name %></h5>
-              <div class="d-flex align-items-center mb-3">
-                <span class="h5 fw-bold text-wa mb-0">₦<%= product.price.toLocaleString() %></span>
-                <% if (product.compareAtPrice) { %>
-                  <small class="text-muted text-decoration-line-through ms-2">₦<%= product.compareAtPrice.toLocaleString() %></small>
-                <% } %>
-              </div>
-              <div class="d-grid gap-2">
-                <a href="/dashboard/products/edit/<%= product._id %>" class="btn btn-light btn-sm fw-bold">
-                  <i class="fa fa-edit me-1"></i> Edit Details
-                </a>
-                <a href="/store/<%= vendor.slug %>/product/<%= product._id %>" target="_blank" class="btn btn-outline-wa btn-sm">
-                  <i class="fa fa-external-link me-1"></i> Preview
-                </a>
-              </div>
-            </div>
-            <div class="card-footer bg-white border-top-0 pb-3">
-              <div class="d-flex justify-content-between text-muted small">
-                <span><i class="fa fa-eye me-1"></i> <%= product.views %> views</span>
-                <span><i class="fa fa-shopping-bag me-1"></i> <%= product.orderCount %> sales</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      <% }) %>
-    <% } else { %>
-      <div class="col-12 text-center py-5">
-        <div class="card border-0 shadow-sm p-5">
-          <i class="fa fa-box-open fa-4x text-light mb-3"></i>
-          <h4 class="fw-bold">Your showroom is empty</h4>
-          <p class="text-muted mb-4">Start by adding your first vehicle or product to the store.</p>
-          <a href="/dashboard/products/add" class="btn btn-wa px-5 py-2 rounded-pill">Add Product Now</a>
+<div class="container-fluid">
+  <div class="row">
+    <!-- Sidebar -->
+    <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse px-3 pt-4">
+      <div class="mb-5 px-3">
+        <h2 class="fw-bold text-wa mb-0">WaStore</h2>
+        <p class="small text-muted">Admin Panel</p>
+      </div>
+      
+      <div class="nav flex-column">
+        <a class="nav-link-wa" href="/dashboard">
+          <i class="fa fa-th-large"></i> Overview
+        </a>
+        <a class="nav-link-wa active" href="/dashboard/products">
+          <i class="fa fa-box"></i> Inventory
+        </a>
+        <a class="nav-link-wa" href="/dashboard/orders">
+          <i class="fa fa-shopping-bag"></i> Orders
+        </a>
+        <a class="nav-link-wa" href="/dashboard/customers">
+          <i class="fa fa-users"></i> Customers
+        </a>
+        <a class="nav-link-wa" href="/dashboard/settings">
+          <i class="fa fa-cog"></i> Settings
+        </a>
+        
+        <div class="mt-5 pt-5 border-top">
+          <a class="nav-link-wa text-danger" href="#" onclick="document.getElementById('logout-form').submit()">
+            <i class="fa fa-sign-out-alt"></i> Logout
+          </a>
+          <form id="logout-form" action="/auth/logout" method="POST" style="display: none;"></form>
         </div>
       </div>
-    <% } %>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h1 class="h3 fw-bold mb-0">My Inventory <i class="fa fa-box small text-muted"></i></h1>
+          <p class="text-muted small">You have <%= products.length %> products in your showroom.</p>
+        </div>
+        <a href="/dashboard/products/add" class="btn btn-wa rounded-pill px-4">
+          <i class="fa fa-plus me-2"></i> Add New Product
+        </a>
+      </div>
+
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
+        <% if (products.length > 0) { %>
+          <% products.forEach(product => { %>
+            <div class="col">
+              <div class="card h-100 border-0 shadow-sm overflow-hidden">
+                <div class="position-relative">
+                  <img src="<%= product.primaryImage %>" class="card-img-top" alt="<%= product.name %>" style="aspect-ratio: 4/3; object-fit: cover;">
+                  <div class="position-absolute top-0 end-0 m-2">
+                    <span class="badge rounded-pill <%= product.stockStatus === 'in_stock' ? 'bg-success' : 'bg-danger' %>">
+                      <%= product.stockStatus.replace('_', ' ').toUpperCase() %>
+                    </span>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <h5 class="card-title fw-bold text-truncate"><%= product.name %></h5>
+                  <div class="d-flex align-items-center mb-3">
+                    <span class="h5 fw-bold text-wa mb-0">₦<%= product.price.toLocaleString() %></span>
+                    <% if (product.compareAtPrice) { %>
+                      <small class="text-muted text-decoration-line-through ms-2">₦<%= product.compareAtPrice.toLocaleString() %></small>
+                    <% } %>
+                  </div>
+                  <div class="d-grid gap-2">
+                    <a href="/dashboard/products/edit/<%= product._id %>" class="btn btn-light btn-sm fw-bold">
+                      <i class="fa fa-edit me-1"></i> Edit Details
+                    </a>
+                    <a href="/store/<%= vendor.slug %>/product/<%= product._id %>" target="_blank" class="btn btn-outline-wa btn-sm">
+                      <i class="fa fa-external-link me-1"></i> Preview
+                    </a>
+                  </div>
+                </div>
+                <div class="card-footer bg-white border-top-0 pb-3">
+                  <div class="d-flex justify-content-between text-muted small">
+                    <span><i class="fa fa-eye me-1"></i> <%= product.views %> views</span>
+                    <span><i class="fa fa-shopping-bag me-1"></i> <%= product.orderCount %> sales</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% }) %>
+        <% } else { %>
+          <div class="col-12 text-center py-5">
+            <div class="card border-0 shadow-sm p-5">
+              <i class="fa fa-box-open fa-4x text-light mb-3"></i>
+              <h4 class="fw-bold">Your showroom is empty</h4>
+              <p class="text-muted mb-4">Start by adding your first product to the store.</p>
+              <a href="/dashboard/products/add" class="btn btn-wa px-5 py-2 rounded-pill">Add Product Now</a>
+            </div>
+          </div>
+        <% } %>
+      </div>
+    </main>
   </div>
 </div>
+
+<style>
+  :root {
+    --vendor-primary: <%= vendor.storefront.themeColor || '#25D366' %>;
+  }
+  .text-wa { color: var(--vendor-primary) !important; }
+  .btn-wa { 
+    background-color: var(--vendor-primary); 
+    color: white; 
+    border: none;
+  }
+  .btn-wa:hover {
+    opacity: 0.9;
+    color: white;
+  }
+  .btn-outline-wa {
+    border-color: var(--vendor-primary);
+    color: var(--vendor-primary);
+  }
+  .btn-outline-wa:hover {
+    background-color: var(--vendor-primary);
+    color: white;
+  }
+  .nav-link-wa.active {
+    background-color: var(--vendor-primary);
+    color: white;
+  }
+</style>

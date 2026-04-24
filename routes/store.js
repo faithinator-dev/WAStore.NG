@@ -110,8 +110,16 @@ router.get('/:vendorSlug/product/:productId', resolveStore, async (req, res, nex
       .limit(4)
       .lean();
 
+    // Clean description for meta tag (no HTML, max 160 chars)
+    const metaDescription = product.description 
+      ? product.description.replace(/<[^>]*>/g, '').substring(0, 160) + '...'
+      : `Buy ${product.name} on ${req.store.businessName} via WaStore.`;
+
     res.render('store/product', {
       title: `${product.name} — ${req.store.businessName}`,
+      description: metaDescription,
+      image: product.primaryImage,
+      currentUrl: `${req.protocol}://${req.get('host')}${req.originalUrl}`,
       product,
       related,
     });

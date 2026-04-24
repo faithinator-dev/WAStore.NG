@@ -21,7 +21,10 @@
             <input type="email" name="email" class="form-control form-control-lg border-light-subtle bg-light" placeholder="e.g. name@company.com" required>
           </div>
           <div class="mb-4">
-            <label class="form-label fw-semibold small">PASSWORD</label>
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <label class="form-label fw-semibold small mb-0">PASSWORD</label>
+              <a href="/auth/forgot-password" class="text-wa small fw-bold text-decoration-none">Forgot Password?</a>
+            </div>
             <input type="password" name="password" class="form-control form-control-lg border-light-subtle bg-light" placeholder="Enter password" required>
           </div>
           <button type="submit" class="btn btn-wa w-100 py-3 mb-3">Login to Dashboard</button>

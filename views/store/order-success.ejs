@@ -15,7 +15,7 @@
       <!-- Order Details -->
       <div class="card mb-4 shadow-sm">
         <div class="card-body">
-          <h5 class="card-title mb-4">📋 Order Details</h5>
+          <h5 class="card-title mb-4"><i class="fa fa-clipboard-list text-wa me-2"></i> Order Details</h5>
           <div class="row mb-3">
             <div class="col-md-6">
               <p class="mb-2"><strong>Order ID:</strong></p>
@@ -43,7 +43,7 @@
       <!-- Items Ordered -->
       <div class="card mb-4 shadow-sm">
         <div class="card-body">
-          <h5 class="card-title mb-4">🛒 Items Ordered</h5>
+          <h5 class="card-title mb-4"><i class="fa fa-shopping-cart text-wa me-2"></i> Items Ordered</h5>
           <div class="table-responsive">
             <table class="table table-sm">
               <thead>
@@ -72,7 +72,7 @@
       <!-- Buyer Info -->
       <div class="card mb-4 shadow-sm">
         <div class="card-body">
-          <h5 class="card-title mb-4">👤 Delivery Information</h5>
+          <h5 class="card-title mb-4"><i class="fa fa-user text-wa me-2"></i> Delivery Information</h5>
           <p class="mb-2"><strong>Name:</strong> <%= order.buyerInfo.name %></p>
           <p class="mb-2"><strong>Email:</strong> <%= order.buyerInfo.email %></p>
           <p class="mb-2"><strong>Phone:</strong> <%= order.buyerInfo.phone %></p>
@@ -82,7 +82,7 @@
 
       <!-- Next Steps -->
       <div class="alert alert-info mb-4" role="alert">
-        <h6 class="alert-heading">📱 What happens next?</h6>
+        <h6 class="alert-heading"><i class="fa fa-mobile-alt text-wa me-2"></i> What happens next?</h6>
         <p class="mb-2">The vendor will contact you on WhatsApp or via the provided phone number to confirm your order and arrange payment.</p>
         <p class="mb-0"><strong>Order ID:</strong> <%= order._id %> (Share this with the vendor)</p>
       </div>
