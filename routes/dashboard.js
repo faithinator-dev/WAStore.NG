@@ -31,6 +31,7 @@ router.get('/', async (req, res, next) => {
       totalCustomers,
       recentOrders,
       monthRevenue,
+      lowStockProducts,
     ] = await Promise.all([
       Order.countDocuments({ vendor: vendorId }),
       Order.countDocuments({ vendor: vendorId, status: 'pending' }),
