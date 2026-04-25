@@ -69,23 +69,14 @@
           <i class="fab fa-whatsapp text-success fs-2 ms-3"></i>
         </label>
 
-        <!-- <label class="list-group-item d-flex align-items-center p-3 border-light-subtle rounded-4 cursor-pointer">
+        <label class="list-group-item d-flex align-items-center p-3 border-light-subtle rounded-4 cursor-pointer">
           <input class="form-check-input me-3" type="radio" name="paymentMethod" value="online">
           <div class="flex-grow-1">
             <div class="fw-bold">Pay Now (Naira Card)</div>
             <small class="text-muted">Secure payment via Paystack gateway.</small>
           </div>
           <i class="fa fa-shield-alt text-primary fs-3 ms-3"></i>
-        </label> -->
-        <div class="p-3 border rounded-4 bg-light opacity-75">
-          <div class="d-flex align-items-center">
-            <div class="flex-grow-1">
-              <div class="fw-bold text-muted">Card Payment</div>
-              <small class="text-muted italic">Coming soon: Pay directly with your card.</small>
-            </div>
-            <i class="fa fa-lock text-muted fs-4 ms-3"></i>
-          </div>
-        </div>
+        </label>
       </div>
     </div>
 
@@ -122,7 +113,11 @@
         email: document.getElementById('email').value || null,
         additionalNotes: document.getElementById('additionalNotes').value || ''
       },
-      items: cart.map(i => ({ productId: i.productId, quantity: i.quantity })),
+      items: cart.map(i => ({ 
+        productId: i.productId, 
+        quantity: i.quantity,
+        selectedVariants: i.selectedVariants || {}
+      })),
       deliveryFee: 0
     };
 

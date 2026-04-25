@@ -54,4 +54,29 @@ router.patch('/:id/status', async (req, res, next) => {
   }
 });
 
+// ── GET /dashboard/orders/export ─────────────────────────────────────────────
+router.get('/export', async (req, res, next) => {
+  try {
+    const orders = await Order.find({ vendor: req.vendor._id })
+      .sort({ createdAt: -1 })
+      .populate('customer', 'fullName phone');
+
+    // Simple CSV header
+    let csv = 'Order Ref,Date,Customer,Phone,Total,Status,Payment Status\n';
+    
+    orders.forEach(o => {
+      const date = o.createdAt.toLocaleDateString();
+      const customer = o.customer ? o.customer.fullName : 'Guest';
+      const phone = o.customer ? o.customer.phone : '';
+      csv += `${o.orderNumber},${date},"${customer}","${phone}",${o.total},${o.status},${o.payment.status}\n`;
+    });
+
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', `attachment; filename=orders-${req.vendor.slug}.csv`);
+    res.send(csv);
+  } catch (err) {
+    next(err);
+  }
+});
+
 module.exports = router;

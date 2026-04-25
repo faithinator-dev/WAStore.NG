@@ -42,7 +42,9 @@ async function resolveStore(req, res, next) {
 // Main storefront catalog
 router.get('/:vendorSlug', resolveStore, async (req, res, next) => {
   try {
-    const { category, search, sort = 'displayOrder' } = req.query;
+    const { category, search, sort = 'displayOrder', page = 1 } = req.query;
+    const limit = 12; // 12 products per page
+    const skip = (parseInt(page) - 1) * limit;
 
     const filter = {
       vendor: req.store._id,
@@ -64,8 +66,9 @@ router.get('/:vendorSlug', resolveStore, async (req, res, next) => {
     };
     const sortQuery = sortMap[sort] || sortMap.displayOrder;
 
-    const [products, categories] = await Promise.all([
-      Product.find(filter).sort(sortQuery),
+    const [products, totalProducts, categories] = await Promise.all([
+      Product.find(filter).sort(sortQuery).skip(skip).limit(limit),
+      Product.countDocuments(filter),
       Product.distinct('category', { vendor: req.store._id, isPublished: true }),
     ]);
 
@@ -76,6 +79,12 @@ router.get('/:vendorSlug', resolveStore, async (req, res, next) => {
       selectedCategory: category || null,
       search: search || '',
       sort,
+      pagination: {
+        total: totalProducts,
+        page: parseInt(page),
+        pages: Math.ceil(totalProducts / limit),
+        limit
+      }
     });
   } catch (err) {
     next(err);

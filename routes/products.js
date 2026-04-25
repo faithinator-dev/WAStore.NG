@@ -179,4 +179,43 @@ router.post('/sync', async (req, res, next) => {
   }
 });
 
+// ── POST /dashboard/products/duplicate/:id ────────────────────────────────────
+router.post('/duplicate/:id', async (req, res, next) => {
+  try {
+    const original = await Product.findOne({ _id: req.params.id, vendor: req.vendor._id });
+    if (!original) return res.status(404).json({ success: false, message: 'Product not found' });
+
+    const duplicate = new Product({
+      ...original.toObject(),
+      _id: new mongoose.Types.ObjectId(),
+      name: `${original.name} (Copy)`,
+      isPublished: false, // Don't publish duplicates automatically
+      views: 0,
+      orderCount: 0,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    });
+
+    await duplicate.save();
+    req.session.flashSuccess = 'Product duplicated successfully!';
+    res.redirect('/dashboard/products');
+  } catch (err) {
+    next(err);
+  }
+});
+
+// ── POST /dashboard/products/bulk-status ──────────────────────────────────────
+router.post('/bulk-status', async (req, res, next) => {
+  const { ids, status } = req.body;
+  try {
+    await Product.updateMany(
+      { _id: { $in: ids }, vendor: req.vendor._id },
+      { stockStatus: status }
+    );
+    res.json({ success: true, message: `Updated ${ids.length} products to ${status}` });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
 module.exports = router;

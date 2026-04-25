@@ -70,9 +70,17 @@
                     <a href="/dashboard/products/edit/<%= product._id %>" class="btn btn-light btn-sm fw-bold">
                       <i class="fa fa-edit me-1"></i> Edit Details
                     </a>
-                    <a href="/store/<%= vendor.slug %>/product/<%= product._id %>" target="_blank" class="btn btn-outline-wa btn-sm">
-                      <i class="fa fa-external-link me-1"></i> Preview
-                    </a>
+                    <div class="d-flex gap-2">
+                      <form action="/dashboard/products/duplicate/<%= product._id %>" method="POST" class="flex-grow-1">
+                        <input type="hidden" name="_csrf" value="<%= locals.csrfToken %>">
+                        <button type="submit" class="btn btn-outline-secondary btn-sm w-100 fw-bold" title="Duplicate">
+                          <i class="fa fa-copy"></i>
+                        </button>
+                      </form>
+                      <a href="/store/<%= vendor.slug %>/product/<%= product._id %>" target="_blank" class="btn btn-outline-wa btn-sm flex-grow-1">
+                        <i class="fa fa-external-link"></i> Preview
+                      </a>
+                    </div>
                   </div>
                 </div>
                 <div class="card-footer bg-white border-top-0 pb-3">

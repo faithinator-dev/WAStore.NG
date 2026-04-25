@@ -53,6 +53,11 @@ router.get('/', async (req, res, next) => {
         },
         { $group: { _id: null, total: { $sum: '$total' } } },
       ]),
+      Product.find({ 
+        vendor: vendorId, 
+        trackQuantity: true, 
+        quantity: { $lte: 5, $gt: 0 } 
+      }).limit(5).lean(),
     ]);
 
     const stats = {
@@ -69,6 +74,7 @@ router.get('/', async (req, res, next) => {
       title: `Dashboard — ${req.vendor.businessName}`,
       stats,
       recentOrders,
+      lowStockProducts,
     });
   } catch (err) {
     next(err);

@@ -23,7 +23,22 @@
       <div class="card border-0 shadow-lg overflow-hidden p-0">
         <div class="row g-0">
           <div class="col-md-6 border-end">
-            <img src="<%= product.primaryImage %>" class="img-fluid h-100 w-100" alt="<%= product.name %>" style="object-fit: cover; min-height: 400px;">
+            <!-- Main Image -->
+            <div class="main-image-container">
+              <img id="main-product-image" src="<%= product.primaryImage %>" class="img-fluid w-100" alt="<%= product.name %>" style="object-fit: cover; min-height: 400px;">
+            </div>
+            
+            <!-- Thumbnail Gallery -->
+            <% if (product.images && product.images.length > 1) { %>
+              <div class="d-flex p-3 gap-2 overflow-auto bg-light border-top">
+                <% product.images.forEach((img, index) => { %>
+                  <img src="<%= img.url %>" 
+                       class="rounded border cursor-pointer thumb-img <%= img.isPrimary ? 'border-wa' : '' %>" 
+                       style="width: 60px; height: 60px; object-fit: cover;"
+                       onclick="changeMainImage(this, '<%= img.url %>')">
+                <% }) %>
+              </div>
+            <% } %>
           </div>
           <div class="col-md-6 d-flex flex-column">
             <div class="card-body p-4 p-lg-5">
@@ -37,6 +52,23 @@
                   <span class="badge bg-danger ms-3 rounded-pill"><%= product.discountPercent %>% OFF</span>
                 <% } %>
               </div>
+
+              <!-- Variant Selectors -->
+              <% if (product.variants && product.variants.length > 0) { %>
+                <div class="mb-4">
+                  <% product.variants.forEach(variant => { %>
+                    <div class="mb-3 variant-group" data-variant-label="<%= variant.label %>">
+                      <label class="form-label fw-bold small text-uppercase text-muted"><%= variant.label %></label>
+                      <div class="d-flex flex-wrap gap-2">
+                        <% variant.options.forEach((option, idx) => { %>
+                          <input type="radio" class="btn-check" name="variant_<%= variant.label %>" id="opt_<%= variant.label %>_<%= idx %>" value="<%= option %>" <%= idx === 0 ? 'checked' : '' %>>
+                          <label class="btn btn-outline-secondary btn-sm px-3 rounded-pill" for="opt_<%= variant.label %>_<%= idx %>"><%= option %></label>
+                        <% }) %>
+                      </div>
+                    </div>
+                  <% }) %>
+                </div>
+              <% } %>
 
               <div class="mb-4">
                 <h6 class="fw-bold mb-2">Description</h6>
@@ -56,7 +88,7 @@
 
               <div class="mt-auto">
                 <% if (product.stockStatus === 'in_stock') { %>
-                  <button class="btn btn-wa w-100 py-3 fs-5 shadow-sm" onclick="Cart.add({ productId: '<%= product._id %>', name: '<%= product.name %>', price: <%= product.price %>, image: '<%= product.primaryImage %>' })">
+                  <button class="btn btn-wa w-100 py-3 fs-5 shadow-sm" onclick="addToCartWithVariants()">
                     <i class="fa fa-shopping-cart me-2"></i> Add to Cart
                   </button>
                 <% } else { %>
@@ -76,7 +108,7 @@
 <!-- Mobile Float Nav -->
 <div class="d-md-none position-fixed bottom-0 start-0 w-100 bg-white p-3 border-top shadow z-3">
   <% if (product.stockStatus === 'in_stock') { %>
-    <button class="btn btn-wa w-100 py-3 fw-bold shadow" onclick="Cart.add({ productId: '<%= product._id %>', name: '<%= product.name %>', price: <%= product.price %>, image: '<%= product.primaryImage %>' })">
+    <button class="btn btn-wa w-100 py-3 fw-bold shadow" onclick="addToCartWithVariants()">
       <i class="fa fa-shopping-cart me-2"></i> Add to Cart — ₦<%= product.price.toLocaleString() %>
     </button>
   <% } else { %>
@@ -126,6 +158,36 @@
 </style>
 
 <script>
+function changeMainImage(el, url) {
+  document.getElementById('main-product-image').src = url;
+  document.querySelectorAll('.thumb-img').forEach(img => img.classList.remove('border-wa'));
+  el.classList.add('border-wa');
+}
+
+function getSelectedVariants() {
+  const selected = {};
+  document.querySelectorAll('.variant-group').forEach(group => {
+    const label = group.dataset.variantLabel;
+    const checked = group.querySelector('input:checked');
+    if (checked) {
+      selected[label] = checked.value;
+    }
+  });
+  return selected;
+}
+
+function addToCartWithVariants() {
+  const selectedVariants = getSelectedVariants();
+  const productData = {
+    productId: '<%= product._id %>',
+    name: '<%= product.name.replace(/'/g, "\\'") %>',
+    price: <%= product.price %>,
+    image: '<%= product.primaryImage %>',
+    selectedVariants: selectedVariants
+  };
+  Cart.add(productData);
+}
+
 function shareToWhatsApp() {
   const productName = '<%= product.name.replace(/'/g, "\\'") %>';
   const businessName = '<%= store.businessName.replace(/'/g, "\\'") %>';

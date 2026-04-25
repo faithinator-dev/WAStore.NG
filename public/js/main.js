@@ -8,46 +8,55 @@ const Cart = {
   
   save: (items) => localStorage.setItem('wastore_cart', JSON.stringify(items)),
   
+  getItemKey: (item) => {
+    const variantStr = item.selectedVariants ? JSON.stringify(item.selectedVariants) : '';
+    return `${item.productId}_${variantStr}`;
+  },
+
   add: (product) => {
     let items = Cart.get();
-    const existing = items.find(i => i.productId === product.productId);
+    const productKey = Cart.getItemKey(product);
+    
+    const existing = items.find(i => Cart.getItemKey(i) === productKey);
     if (existing) {
       existing.quantity += 1;
     } else {
       items.push({ ...product, quantity: 1 });
     }
-    Cart.save(items);
-    if (window.showToast) {
-      showToast(`${product.name} added to cart! 🛍️`);
-    }
-  },
-  
-  remove: (productId) => {
-    let items = Cart.get().filter(i => i.productId !== productId);
-    Cart.save(items);
     
-    // Attempt to update the cart UI dynamically
-    const row = document.getElementById(`cart-item-${productId}`);
-    if (row) row.remove();
+    Cart.save(items);
     
     const countBadge = document.getElementById('cart-count');
     if (countBadge) countBadge.innerText = items.reduce((acc, i) => acc + i.quantity, 0);
 
-    // Dispatch custom event so the cart page can update totals
+    if (window.showToast) {
+      showToast(`${product.name} added to cart! 🛍️`);
+    }
+    
+    window.dispatchEvent(new CustomEvent('cartUpdated'));
+  },
+  
+  remove: (itemKey) => {
+    let items = Cart.get().filter(i => Cart.getItemKey(i) !== itemKey);
+    Cart.save(items);
+    
+    const countBadge = document.getElementById('cart-count');
+    if (countBadge) countBadge.innerText = items.reduce((acc, i) => acc + i.quantity, 0);
+
     window.dispatchEvent(new CustomEvent('cartUpdated'));
 
     if (items.length === 0 && window.location.pathname.endsWith('/cart')) {
-      location.reload(); // Reload to show empty state
+      location.reload();
     }
   },
 
-  updateQuantity: (productId, delta) => {
+  updateQuantity: (itemKey, delta) => {
     let items = Cart.get();
-    const item = items.find(i => i.productId === productId);
+    const item = items.find(i => Cart.getItemKey(i) === itemKey);
     if (item) {
       item.quantity += delta;
       if (item.quantity <= 0) {
-        return Cart.remove(productId);
+        return Cart.remove(itemKey);
       }
       Cart.save(items);
       const countBadge = document.getElementById('cart-count');
