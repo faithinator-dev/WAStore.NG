@@ -6,6 +6,7 @@
 const express = require('express');
 const crypto = require('crypto');
 const router = express.Router();
+const { body, validationResult } = require('express-validator');
 const Vendor = require('../models/Vendor');
 const { sendResetEmail } = require('../utils/mail');
 
@@ -16,7 +17,21 @@ router.get('/signup', (req, res) => {
 });
 
 // ── POST /auth/signup ─────────────────────────────────────────────────────────
-router.post('/signup', async (req, res) => {
+router.post('/signup', [
+  body('businessName').trim().notEmpty().withMessage('Business name is required'),
+  body('ownerName').trim().notEmpty().withMessage('Your name is required'),
+  body('email').isEmail().withMessage('Enter a valid email address').normalizeEmail(),
+  body('phone').trim().notEmpty().withMessage('WhatsApp number is required').isNumeric().withMessage('Phone must contain only numbers'),
+  body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters long'),
+], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.render('auth/signup', {
+      title: 'Create Your WaStore',
+      errors: errors.array(),
+    });
+  }
+
   const { businessName, ownerName, email, phone, password } = req.body;
 
   // Build slug from business name

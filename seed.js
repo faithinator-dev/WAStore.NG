@@ -35,6 +35,26 @@ const seedData = async () => {
     await demoVendor.save();
     console.log('✅ Demo Vendor Created: autovault');
 
+    // Clear existing admin data
+    await Vendor.deleteOne({ email: 'admin@wastore.ng' });
+    
+    const adminVendor = new Vendor({
+      businessName: 'WaStore Super Admin',
+      ownerName: 'System Administrator',
+      email: 'admin@wastore.ng',
+      phone: '2348000000000',
+      slug: 'admin',
+      passwordHash: 'admin1234',
+      role: 'admin',
+      storefront: {
+        tagline: 'Platform Administration',
+        themeColor: '#000000',
+        category: 'Other'
+      }
+    });
+    await adminVendor.save();
+    console.log('✅ Admin User Created: admin@wastore.ng');
+
     const cars = [
       {
         vendor: demoVendor._id,

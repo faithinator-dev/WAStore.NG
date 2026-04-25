@@ -19,7 +19,7 @@
           <div class="row mb-3">
             <div class="col-md-6">
               <p class="mb-2"><strong>Order ID:</strong></p>
-              <p class="text-wa font-monospace fw-bold"><%= order._id %></p>
+              <p class="text-wa font-monospace fw-bold"><%= order.orderNumber %></p>
             </div>
             <div class="col-md-6">
               <p class="mb-2"><strong>Date:</strong></p>
@@ -84,7 +84,7 @@
       <div class="alert alert-info mb-4" role="alert">
         <h6 class="alert-heading"><i class="fa fa-mobile-alt text-wa me-2"></i> What happens next?</h6>
         <p class="mb-2">The vendor will contact you on WhatsApp or via the provided phone number to confirm your order and arrange payment.</p>
-        <p class="mb-0"><strong>Order ID:</strong> <%= order._id %> (Share this with the vendor)</p>
+        <p class="mb-0"><strong>Order ID:</strong> <%= order.orderNumber %> (Share this with the vendor)</p>
       </div>
 
       <!-- Actions -->
@@ -92,7 +92,7 @@
         <a href="/store/<%= store.slug %>" class="btn btn-outline-wa btn-lg rounded-pill">
           <i class="fas fa-shopping-bag me-2"></i> Continue Shopping
         </a>
-        <a href="https://wa.me/<%= store.phone.replace(/[^0-9]/g, '') %>?text=Order%20ID:%20<%= order._id %>" target="_blank" class="btn btn-wa btn-lg rounded-pill">
+        <a href="https://wa.me/<%= store.phone.replace(/[^0-9]/g, '') %>?text=Order%20ID:%20<%= order.orderNumber %>" target="_blank" class="btn btn-wa btn-lg rounded-pill">
           <i class="fab fa-whatsapp me-2"></i> Contact Vendor
         </a>
       </div>

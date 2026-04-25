@@ -33,6 +33,11 @@
         <input type="text" id="address" class="form-control form-control-lg bg-light border-0" placeholder="e.g. 123 Showroom Ave" required>
       </div>
 
+      <div class="mb-3">
+        <label class="form-label fw-bold small">APARTMENT / SUITE / UNIT (OPTIONAL)</label>
+        <input type="text" id="addressLine2" class="form-control form-control-lg bg-light border-0" placeholder="e.g. Flat 4B">
+      </div>
+
       <div class="row">
         <div class="col-md-6 mb-3">
           <label class="form-label fw-bold small">CITY</label>
@@ -42,6 +47,11 @@
           <label class="form-label fw-bold small">STATE</label>
           <input type="text" id="state" class="form-control form-control-lg bg-light border-0" required>
         </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-bold small">ORDER NOTES (OPTIONAL)</label>
+        <textarea id="additionalNotes" class="form-control form-control-lg bg-light border-0" placeholder="Special instructions for delivery..." rows="3"></textarea>
       </div>
     </div>
 
@@ -90,6 +100,7 @@
   </form>
 </div>
 
+<script src="https://js.paystack.co/v1/inline.js"></script>
 <script>
   document.getElementById('checkout-form').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -105,9 +116,11 @@
         fullName: document.getElementById('fullName').value,
         phone: document.getElementById('phone').value,
         addressLine1: document.getElementById('address').value,
+        addressLine2: document.getElementById('addressLine2').value || '',
         city: document.getElementById('city').value,
         state: document.getElementById('state').value,
-        email: document.getElementById('email').value || null
+        email: document.getElementById('email').value || null,
+        additionalNotes: document.getElementById('additionalNotes').value || ''
       },
       items: cart.map(i => ({ productId: i.productId, quantity: i.quantity })),
       deliveryFee: 0
@@ -127,7 +140,22 @@
         if (method === 'whatsapp') {
           window.location.href = data.redirectUrl;
         } else {
-          window.location.href = data.callbackUrl;
+          // Paystack Popup Initialization
+          const handler = PaystackPop.setup({
+            key: '<%= paystackPublicKey %>',
+            email: data.email || 'buyer@example.com', // Paystack requires email
+            amount: data.amountKobo,
+            ref: data.paystackRef,
+            onClose: function() {
+              alert('Payment window closed.');
+              btn.disabled = false;
+              btn.innerText = 'Place Order Successfully';
+            },
+            callback: function(response) {
+              window.location.href = data.callbackUrl;
+            }
+          });
+          handler.openIframe();
         }
       } else {
         alert(data.message || 'Error processing order');

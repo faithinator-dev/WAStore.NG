@@ -20,7 +20,7 @@ const Customer = require('../models/Customer');
 // ─────────────────────────────────────────────────────────────────────────────
 //  HELPER: Upsert Customer (CRM auto-save)
 // ─────────────────────────────────────────────────────────────────────────────
-async function upsertCustomer(vendorId, { fullName, email, phone, city, state, addressLine1 }, channel) {
+async function upsertCustomer(vendorId, { fullName, email, phone, city, state, addressLine1, addressLine2 }, channel) {
   const customer = await Customer.findOneAndUpdate(
     { vendor: vendorId, phone },
     {
@@ -34,7 +34,7 @@ async function upsertCustomer(vendorId, { fullName, email, phone, city, state, a
         email: email || null,
       },
       $addToSet: {
-        addresses: { addressLine1, city, state, lastUsedAt: new Date() },
+        addresses: { addressLine1, addressLine2, city, state, lastUsedAt: new Date() },
       },
     },
     { upsert: true, new: true }

@@ -31,13 +31,28 @@ const Cart = {
     if (row) row.remove();
     
     const countBadge = document.getElementById('cart-count');
-    if (countBadge) countBadge.innerText = items.length;
+    if (countBadge) countBadge.innerText = items.reduce((acc, i) => acc + i.quantity, 0);
 
     // Dispatch custom event so the cart page can update totals
     window.dispatchEvent(new CustomEvent('cartUpdated'));
 
     if (items.length === 0 && window.location.pathname.endsWith('/cart')) {
       location.reload(); // Reload to show empty state
+    }
+  },
+
+  updateQuantity: (productId, delta) => {
+    let items = Cart.get();
+    const item = items.find(i => i.productId === productId);
+    if (item) {
+      item.quantity += delta;
+      if (item.quantity <= 0) {
+        return Cart.remove(productId);
+      }
+      Cart.save(items);
+      const countBadge = document.getElementById('cart-count');
+      if (countBadge) countBadge.innerText = items.reduce((acc, i) => acc + i.quantity, 0);
+      window.dispatchEvent(new CustomEvent('cartUpdated'));
     }
   },
   

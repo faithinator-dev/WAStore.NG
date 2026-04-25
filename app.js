@@ -18,6 +18,8 @@ const compression = require('compression');
 const cloudinary = require('cloudinary').v2;
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
+const cookieParser = require('cookie-parser');
+const csrf = require('csurf');
 
 // ── Route Imports ─────────────────────────────────────────────────────────────
 const authRoutes = require('./routes/auth');
@@ -107,11 +109,24 @@ app.use(
   })
 );
 
+app.use(cookieParser());
+
+// CSRF Protection (Exclude webhooks)
+const csrfProtection = csrf({ cookie: false }); // using session-based by default if cookie is false
+app.use((req, res, next) => {
+  if (req.path === '/webhooks' || req.path.startsWith('/webhooks/')) {
+    next();
+  } else {
+    csrfProtection(req, res, next);
+  }
+});
+
 // ── Global Locals ─────────────────────────────────────────────────────────────
 app.use((req, res, next) => {
   res.locals.vendor = req.session.vendor || null;
   res.locals.flashSuccess = req.session.flashSuccess || null;
   res.locals.flashError = req.session.flashError || null;
+  res.locals.csrfToken = req.csrfToken ? req.csrfToken() : null;
   delete req.session.flashSuccess;
   delete req.session.flashError;
   next();
