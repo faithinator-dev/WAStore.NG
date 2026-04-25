@@ -6,6 +6,7 @@
 require('dotenv').config();
 const express = require('express');
 const expressLayouts = require('express-ejs-layouts');
+const rateLimit = require('express-rate-limit');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
@@ -15,6 +16,8 @@ const path = require('path');
 const helmet = require('helmet');
 const compression = require('compression');
 const cloudinary = require('cloudinary').v2;
+const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
 
 // ── Route Imports ─────────────────────────────────────────────────────────────
 const authRoutes = require('./routes/auth');
@@ -25,6 +28,8 @@ const customerRoutes = require('./routes/customers');
 const storeRoutes = require('./routes/store');
 const checkoutRoutes = require('./routes/checkout');
 const webhookRoutes = require('./routes/webhooks');
+const adminRoutes = require('./routes/admin');
+const Vendor = require('./models/Vendor');
 
 const app = express();
 
@@ -56,6 +61,18 @@ mongoose
 app.use(helmet({
   contentSecurityPolicy: false, // Set to false for simpler dev/external images
 }));
+app.use(mongoSanitize());
+app.use(xss());
+
+if (process.env.NODE_ENV === 'production') {
+  app.use((req, res, next) => {
+    if (req.headers['x-forwarded-proto'] !== 'https') {
+      return res.redirect(`https://${req.headers.host}${req.url}`);
+    }
+    next();
+  });
+}
+
 app.use(compression());
 if (process.env.NODE_ENV !== 'production') app.use(morgan('dev'));
 
@@ -72,13 +89,21 @@ app.set('layout', 'layout');
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ── Sessions ──────────────────────────────────────────────────────────────────
+const sessionSecret = process.env.SESSION_SECRET || (process.env.NODE_ENV === 'production' 
+  ? (() => { throw new Error('SESSION_SECRET must be set in production'); })() 
+  : 'wastore-secret-2026');
+
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || 'wastore-secret-2026',
+    secret: sessionSecret,
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({ mongoUrl: MONGO_URI }),
-    cookie: { maxAge: 1000 * 60 * 60 * 24 * 7 }, // 7 days
+    cookie: { 
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+      secure: process.env.NODE_ENV === 'production',
+      httpOnly: true
+    },
   })
 );
 
@@ -92,8 +117,17 @@ app.use((req, res, next) => {
   next();
 });
 
+// ── Rate Limiting ──────────────────────────────────────────────────────────────
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // Limit each IP to 10 requests per windowMs
+  message: 'Too many login attempts from this IP, please try again after 15 minutes',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 // ── Routes ────────────────────────────────────────────────────────────────────
-app.use('/auth', authRoutes);
+app.use('/auth', authLimiter, authRoutes);
 app.use('/dashboard', dashboardRoutes);
 app.use('/dashboard/products', productRoutes);
 app.use('/dashboard/orders', orderRoutes);
@@ -101,6 +135,39 @@ app.use('/dashboard/customers', customerRoutes);
 app.use('/store', storeRoutes);
 app.use('/checkout', checkoutRoutes);
 app.use('/webhooks', webhookRoutes);
+app.use('/admin', adminRoutes);
+
+// ── SEO: Dynamic Sitemap ──────────────────────────────────────────────────────
+app.get('/sitemap.xml', async (req, res) => {
+  try {
+    const vendors = await Vendor.find({ isActive: true }).select('slug updatedAt');
+    const baseUrl = `${req.protocol}://${req.get('host')}`;
+    
+    let xml = `<?xml version="1.0" encoding="UTF-8"?>
+    <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+      <url>
+        <loc>${baseUrl}</url>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+      </url>`;
+
+    vendors.forEach(v => {
+      xml += `
+      <url>
+        <loc>${baseUrl}/store/${v.slug}</loc>
+        <lastmod>${v.updatedAt.toISOString().split('T')[0]}</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+      </url>`;
+    });
+
+    xml += '\n</urlset>';
+    res.header('Content-Type', 'application/xml');
+    res.send(xml);
+  } catch (err) {
+    res.status(500).end();
+  }
+});
 
 // Landing Page
 app.get('/', (req, res) => {

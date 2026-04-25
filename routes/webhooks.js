@@ -38,10 +38,31 @@ router.post('/paystack', async (req, res) => {
     // Handle only successful charge events
     if (event === 'charge.success') {
       const reference = data.reference;
-      // Update order status in database (implement based on your Order schema)
-      console.log('✅ Payment successful for reference:', reference);
+      
+      const order = await Order.findOneAndUpdate(
+        { 'payment.reference': reference },
+        { 
+          $set: { 
+            'payment.status': 'paid', 
+            'payment.paidAt': new Date(),
+            status: 'confirmed' 
+          } 
+        },
+        { new: true }
+      );
+      
+      if (order) {
+        console.log(`✅ Payment successful for reference: ${reference}. Order ${order._id} confirmed.`);
+      } else {
+        console.warn(`⚠️ Payment successful but order not found for reference: ${reference}`);
+      }
     } else if (event === 'charge.failed') {
-      console.log('❌ Payment failed');
+      const reference = data.reference;
+      await Order.findOneAndUpdate(
+        { 'payment.reference': reference },
+        { $set: { 'payment.status': 'failed' } }
+      );
+      console.log(`❌ Payment failed for reference: ${reference}`);
     }
 
     res.sendStatus(200);

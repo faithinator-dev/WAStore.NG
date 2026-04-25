@@ -1,63 +1,171 @@
-<div class="container" style="padding: 2rem 1.5rem; max-width: 800px;">
-  <div style="margin-bottom: 2rem;">
-    <a href="/dashboard" style="color: var(--primary); text-decoration: none; font-weight: 600;">
-      <i class="fa fa-arrow-left"></i> Back to Dashboard
-    </a>
-    <h1 style="margin-top: 1rem;">Edit Product ✏️</h1>
-  </div>
-
-  <div style="background: white; padding: 2rem; border-radius: var(--radius); box-shadow: var(--shadow);">
-    <form action="/dashboard/products/edit/<%= product._id %>" method="POST" enctype="multipart/form-data">
-      <div class="form-group">
-        <label class="form-label">Product Name</label>
-        <input type="text" name="name" class="form-input" value="<%= product.name %>" required>
+<div class="container-fluid">
+  <div class="row">
+    <!-- Sidebar -->
+    <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse px-3 pt-4">
+      <div class="mb-5 px-3">
+        <h2 class="fw-bold text-wa mb-0">WaStore</h2>
+        <p class="small text-muted">Admin Panel</p>
       </div>
-
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
-        <div class="form-group">
-          <label class="form-label">Price (₦)</label>
-          <input type="number" name="price" class="form-input" value="<%= product.price %>" required>
+      
+      <div class="nav flex-column">
+        <a class="nav-link-wa" href="/dashboard">
+          <i class="fa fa-th-large"></i> Overview
+        </a>
+        <a class="nav-link-wa active" href="/dashboard/products">
+          <i class="fa fa-box"></i> Inventory
+        </a>
+        <a class="nav-link-wa" href="/dashboard/orders">
+          <i class="fa fa-shopping-bag"></i> Orders
+        </a>
+        <a class="nav-link-wa" href="/dashboard/customers">
+          <i class="fa fa-users"></i> Customers
+        </a>
+        <a class="nav-link-wa" href="/dashboard/settings">
+          <i class="fa fa-cog"></i> Settings
+        </a>
+        
+        <div class="mt-5 pt-5 border-top">
+          <a class="nav-link-wa text-danger" href="#" onclick="document.getElementById('logout-form').submit()">
+            <i class="fa fa-sign-out-alt"></i> Logout
+          </a>
+          <form id="logout-form" action="/auth/logout" method="POST" style="display: none;"></form>
         </div>
-        <div class="form-group">
-          <label class="form-label">Compare at Price (Optional)</label>
-          <input type="number" name="compareAtPrice" class="form-input" value="<%= product.compareAtPrice %>">
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4">
+        <div>
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-1">
+              <li class="breadcrumb-item"><a href="/dashboard" class="text-wa text-decoration-none">Dashboard</a></li>
+              <li class="breadcrumb-item"><a href="/dashboard/products" class="text-wa text-decoration-none">Inventory</a></li>
+              <li class="breadcrumb-item active" aria-current="page">Edit Product</li>
+            </ol>
+          </nav>
+          <h1 class="h2 fw-bold">Edit Product <i class="fa fa-edit small text-muted"></i></h1>
         </div>
       </div>
 
-      <div class="form-group">
-        <label class="form-label">Stock Status</label>
-        <select name="stockStatus" class="form-input">
-          <option value="in_stock" <%= product.stockStatus === 'in_stock' ? 'selected' : '' %>>In Stock</option>
-          <option value="sold_out" <%= product.stockStatus === 'sold_out' ? 'selected' : '' %>>Sold Out</option>
-          <option value="pre_order" <%= product.stockStatus === 'pre_order' ? 'selected' : '' %>>Pre-Order</option>
-        </select>
-      </div>
+      <% if (locals.errors) { %>
+        <div class="alert alert-danger shadow-sm border-0 rounded-4 mb-4">
+          <ul class="mb-0">
+            <% errors.forEach(err => { %>
+              <li><%= err.msg %></li>
+            <% }) %>
+          </ul>
+        </div>
+      <% } %>
 
-      <div class="form-group">
-        <label class="form-label">Update Image</label>
-        <% if (product.primaryImage) { %>
-          <img src="<%= product.primaryImage %>" style="width: 100px; border-radius: 8px; margin-bottom: 1rem;">
-        <% } %>
-        <input type="file" name="image_file" class="form-input" accept="image/*">
-        <p style="margin-top: 0.5rem; font-size: 0.875rem;">Or URL:</p>
-        <input type="text" name="image_url" class="form-input" value="<%= product.primaryImage %>">
-      </div>
+      <div class="row g-4">
+        <div class="col-lg-8">
+          <div class="card p-4 border-0 shadow-sm mb-4">
+            <form action="/dashboard/products/edit/<%= product._id %>" method="POST" enctype="multipart/form-data">
+              <div class="mb-4">
+                <label class="form-label fw-bold text-muted small">PRODUCT NAME</label>
+                <input type="text" name="name" class="form-control form-control-lg border-light-subtle bg-light" value="<%= product.name %>" required>
+              </div>
 
-      <div class="form-group">
-        <label class="form-label">Description</label>
-        <textarea name="description" class="form-input" rows="5"><%= product.description %></textarea>
-      </div>
+              <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                  <label class="form-label fw-bold text-muted small">PRICE (₦)</label>
+                  <div class="input-group input-group-lg">
+                    <span class="input-group-text bg-white border-light-subtle">₦</span>
+                    <input type="number" name="price" class="form-control border-light-subtle bg-light" value="<%= product.price %>" required>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-bold text-muted small">COMPARE AT PRICE (OPTIONAL)</label>
+                  <div class="input-group input-group-lg">
+                    <span class="input-group-text bg-white border-light-subtle">₦</span>
+                    <input type="number" name="compareAtPrice" class="form-control border-light-subtle bg-light" value="<%= product.compareAtPrice %>">
+                  </div>
+                </div>
+              </div>
 
-      <div style="padding-top: 1rem; border-top: 1px solid var(--light-gray); display: flex; gap: 1rem;">
-        <button type="submit" class="btn btn-primary" style="flex: 1;">Save Changes</button>
-        <a href="/dashboard" class="btn btn-outline" style="flex: 1;">Cancel</a>
+              <div class="mb-4">
+                <label class="form-label fw-bold text-muted small">STOCK STATUS</label>
+                <select name="stockStatus" class="form-select form-select-lg border-light-subtle bg-light">
+                  <option value="in_stock" <%= product.stockStatus === 'in_stock' ? 'selected' : '' %>>In Stock</option>
+                  <option value="sold_out" <%= product.stockStatus === 'sold_out' ? 'selected' : '' %>>Sold Out</option>
+                  <option value="pre_order" <%= product.stockStatus === 'pre_order' ? 'selected' : '' %>>Pre-Order</option>
+                </select>
+              </div>
+
+              <div class="mb-4">
+                <label class="form-label fw-bold text-muted small">DESCRIPTION</label>
+                <textarea name="description" class="form-control border-light-subtle bg-light" rows="6"><%= product.description %></textarea>
+              </div>
+
+              <div class="mb-4">
+                <label class="form-label fw-bold text-muted small">PRODUCT IMAGE</label>
+                <div class="d-flex align-items-start gap-4 mb-3">
+                  <% if (product.primaryImage) { %>
+                    <img src="<%= product.primaryImage %>" class="rounded-3 shadow-sm" style="width: 120px; aspect-ratio: 1; object-fit: cover;">
+                  <% } %>
+                  <div class="flex-grow-1">
+                    <input type="file" name="image_file" class="form-control mb-2" accept="image/*">
+                    <small class="text-muted d-block">Upload a new image to replace the current one.</small>
+                  </div>
+                </div>
+                <div class="input-group">
+                  <span class="input-group-text bg-white border-light-subtle"><i class="fa fa-link text-muted"></i></span>
+                  <input type="text" name="image_url" class="form-control border-light-subtle bg-light" value="<%= product.primaryImage %>" placeholder="Paste image URL">
+                </div>
+              </div>
+
+              <div class="pt-4 border-top mt-5 d-flex gap-3">
+                <button type="submit" class="btn btn-wa btn-lg px-5 py-3 shadow">
+                  <i class="fa fa-save me-2"></i> Save Changes
+                </button>
+                <a href="/dashboard" class="btn btn-light btn-lg px-5 py-3">
+                  Cancel
+                </a>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="card p-4 border-0 bg-danger-subtle shadow-sm mb-4">
+            <h5 class="fw-bold text-danger mb-3"><i class="fa fa-exclamation-triangle me-2"></i> Danger Zone</h5>
+            <p class="small text-muted mb-4">Once you delete a product, it cannot be recovered. Customers will no longer be able to see or buy this item.</p>
+            <form action="/dashboard/products/<%= product._id %>?_method=DELETE" method="POST" onsubmit="return confirm('Permanently delete this product?');">
+              <button type="submit" class="btn btn-danger w-100 rounded-pill fw-bold">
+                <i class="fa fa-trash me-2"></i> Delete Product
+              </button>
+            </form>
+          </div>
+
+          <div class="card p-4 border-0 shadow-sm">
+            <h5 class="fw-bold mb-3">Stats</h5>
+            <div class="list-group list-group-flush small">
+              <div class="list-group-item d-flex justify-content-between px-0">
+                <span class="text-muted">Total Views</span>
+                <span class="fw-bold"><%= product.views || 0 %></span>
+              </div>
+              <div class="list-group-item d-flex justify-content-between px-0">
+                <span class="text-muted">Total Orders</span>
+                <span class="fw-bold"><%= product.orderCount || 0 %></span>
+              </div>
+              <div class="list-group-item d-flex justify-content-between px-0">
+                <span class="text-muted">Created</span>
+                <span class="fw-bold"><%= product.createdAt.toLocaleDateString() %></span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </form>
-    
-    <div style="margin-top: 2rem; padding-top: 2rem; border-top: 2px solid var(--light-gray);">
-      <form action="/dashboard/products/<%= product._id %>?_method=DELETE" method="POST" onsubmit="return confirm('Are you sure you want to delete this product?');">
-        <button type="submit" class="btn" style="width: 100%; color: var(--error); background: #FEE2E2;">Delete Product</button>
-      </form>
-    </div>
+    </main>
   </div>
 </div>
+
+<style>
+  .breadcrumb-item + .breadcrumb-item::before {
+    content: "›";
+    font-size: 1.2rem;
+    line-height: 1;
+    vertical-align: middle;
+  }
+</style>

@@ -30,7 +30,7 @@
           <div class="row">
             <div class="col-md-6">
               <p class="mb-2"><strong>Total Amount:</strong></p>
-              <h4 class="text-wa">₦<%= order.totalAmount.toLocaleString() %></h4>
+              <h4 class="text-wa">₦<%= order.total.toLocaleString() %></h4>
             </div>
             <div class="col-md-6">
               <p class="mb-2"><strong>Status:</strong></p>
@@ -73,10 +73,10 @@
       <div class="card mb-4 shadow-sm">
         <div class="card-body">
           <h5 class="card-title mb-4"><i class="fa fa-user text-wa me-2"></i> Delivery Information</h5>
-          <p class="mb-2"><strong>Name:</strong> <%= order.buyerInfo.name %></p>
-          <p class="mb-2"><strong>Email:</strong> <%= order.buyerInfo.email %></p>
-          <p class="mb-2"><strong>Phone:</strong> <%= order.buyerInfo.phone %></p>
-          <p class="mb-0"><strong>Address:</strong> <%= order.buyerInfo.address %></p>
+          <p class="mb-2"><strong>Name:</strong> <%= order.deliveryAddress.fullName %></p>
+          <p class="mb-2"><strong>Email:</strong> <%= order.deliveryAddress.email || 'N/A' %></p>
+          <p class="mb-2"><strong>Phone:</strong> <%= order.deliveryAddress.phone %></p>
+          <p class="mb-0"><strong>Address:</strong> <%= order.deliveryAddress.addressLine1 %></p>
         </div>
       </div>
 
@@ -89,10 +89,10 @@
 
       <!-- Actions -->
       <div class="d-flex gap-3 justify-content-center">
-        <a href="/store/<%= vendor.slug %>" class="btn btn-outline-wa btn-lg rounded-pill">
+        <a href="/store/<%= store.slug %>" class="btn btn-outline-wa btn-lg rounded-pill">
           <i class="fas fa-shopping-bag me-2"></i> Continue Shopping
         </a>
-        <a href="https://wa.me/<%= vendor.phone %>?text=Order%20ID:%20<%= order._id %>" target="_blank" class="btn btn-wa btn-lg rounded-pill">
+        <a href="https://wa.me/<%= store.phone.replace(/[^0-9]/g, '') %>?text=Order%20ID:%20<%= order._id %>" target="_blank" class="btn btn-wa btn-lg rounded-pill">
           <i class="fab fa-whatsapp me-2"></i> Contact Vendor
         </a>
       </div>

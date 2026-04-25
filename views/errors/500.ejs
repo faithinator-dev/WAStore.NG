@@ -1,3 +1,29 @@
-<h1>500 - Server Error</h1>
-<p><%= message %></p>
-<a href="/dashboard">Back to Dashboard</a>
+<div class="container py-5">
+  <div class="row min-vh-100 align-items-center justify-content-center">
+    <div class="col-md-6 text-center">
+      <div class="mb-4">
+        <div class="bg-danger-subtle d-inline-flex align-items-center justify-content-center rounded-circle mb-4" style="width: 120px; height: 120px;">
+          <i class="fa fa-exclamation-triangle fa-4x text-danger"></i>
+        </div>
+      </div>
+      <h1 class="display-4 fw-bold">Something went wrong</h1>
+      <p class="lead text-muted mb-4">We encountered an unexpected error on our server. Our team has been notified.</p>
+      
+      <% if (locals.message && process.env.NODE_ENV !== 'production') { %>
+        <div class="alert alert-light border small text-start mb-5 font-monospace">
+          <strong>Error Details:</strong><br>
+          <%= message %>
+        </div>
+      <% } %>
+
+      <div class="d-grid gap-3 d-sm-flex justify-content-center">
+        <a href="/" class="btn btn-wa btn-lg px-5 rounded-pill shadow">Go to Homepage</a>
+        <a href="javascript:location.reload()" class="btn btn-light btn-lg px-5 rounded-pill">Try Again</a>
+      </div>
+
+      <div class="mt-5 pt-5 border-top">
+        <p class="small text-muted">Is this urgent? <a href="https://wa.me/2348123456789" class="text-wa fw-bold text-decoration-none">Message us on WhatsApp</a></p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -17,13 +17,28 @@ const Cart = {
       items.push({ ...product, quantity: 1 });
     }
     Cart.save(items);
-    alert('Added to cart! 🛍️');
+    if (window.showToast) {
+      showToast(`${product.name} added to cart! 🛍️`);
+    }
   },
   
   remove: (productId) => {
     let items = Cart.get().filter(i => i.productId !== productId);
     Cart.save(items);
-    location.reload();
+    
+    // Attempt to update the cart UI dynamically
+    const row = document.getElementById(`cart-item-${productId}`);
+    if (row) row.remove();
+    
+    const countBadge = document.getElementById('cart-count');
+    if (countBadge) countBadge.innerText = items.length;
+
+    // Dispatch custom event so the cart page can update totals
+    window.dispatchEvent(new CustomEvent('cartUpdated'));
+
+    if (items.length === 0 && window.location.pathname.endsWith('/cart')) {
+      location.reload(); // Reload to show empty state
+    }
   },
   
   clear: () => localStorage.removeItem('wastore_cart')

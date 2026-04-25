@@ -78,6 +78,11 @@ const vendorSchema = new mongoose.Schema(
     },
 
     // --- SaaS Plan / Billing ---
+    role: {
+      type: String,
+      enum: ['vendor', 'admin'],
+      default: 'vendor',
+    },
     plan: {
       type: String,
       enum: ['free', 'starter', 'growth', 'pro'],
@@ -88,6 +93,8 @@ const vendorSchema = new mongoose.Schema(
     // --- Account Status ---
     isActive: { type: Boolean, default: true },
     lastLoginAt: { type: Date, default: null },
+    loginAttempts: { type: Number, default: 0 },
+    lockUntil: { type: Date, default: null },
     resetPasswordToken: { type: String, default: null },
     resetPasswordExpires: { type: Date, default: null },
 

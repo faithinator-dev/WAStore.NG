@@ -78,7 +78,28 @@ router.post('/login', async (req, res) => {
 
   try {
     const vendor = await Vendor.findOne({ email }).select('+passwordHash');
-    if (!vendor || !(await vendor.comparePassword(password))) {
+    if (!vendor) {
+      return res.render('auth/login', {
+        title: 'Log In to WaStore',
+        errors: [{ msg: 'Invalid email or password.' }],
+      });
+    }
+
+    if (vendor.lockUntil && vendor.lockUntil > Date.now()) {
+      const waitMinutes = Math.ceil((vendor.lockUntil - Date.now()) / 60000);
+      return res.render('auth/login', {
+        title: 'Log In to WaStore',
+        errors: [{ msg: `Account temporarily locked. Please try again in ${waitMinutes} minutes.` }],
+      });
+    }
+
+    if (!(await vendor.comparePassword(password))) {
+      vendor.loginAttempts = (vendor.loginAttempts || 0) + 1;
+      if (vendor.loginAttempts >= 5) {
+        vendor.lockUntil = Date.now() + 15 * 60 * 1000; // 15 minutes lockout
+      }
+      await vendor.save();
+      
       return res.render('auth/login', {
         title: 'Log In to WaStore',
         errors: [{ msg: 'Invalid email or password.' }],
@@ -92,6 +113,9 @@ router.post('/login', async (req, res) => {
       });
     }
 
+    // Successful login
+    vendor.loginAttempts = 0;
+    vendor.lockUntil = null;
     vendor.lastLoginAt = new Date();
     await vendor.save();
 

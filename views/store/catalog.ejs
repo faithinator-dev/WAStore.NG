@@ -52,7 +52,13 @@
                     <br><small class="text-decoration-line-through text-muted">₦<%= product.compareAtPrice.toLocaleString() %></small>
                   <% } %>
                 </div>
-                <a href="/store/<%= store.slug %>/product/<%= product._id %>" class="btn btn-wa">View Details</a>
+                <div class="d-flex flex-column gap-2">
+                  <button class="btn btn-wa w-100 rounded-pill" 
+                    onclick="addToCartAndNotify({ productId: '<%= product._id %>', name: '<%= product.name.replace(/'/g, "\\'") %>', price: <%= product.price %>, image: '<%= product.primaryImage %>' })">
+                    <i class="fa fa-shopping-cart me-2"></i> Add to Cart
+                  </button>
+                  <a href="/store/<%= store.slug %>/product/<%= product._id %>" class="btn btn-light btn-sm w-100 rounded-pill border">View Details</a>
+                </div>
               </div>
             </div>
             <% if (product.stockStatus === 'sold_out') { %>
@@ -91,6 +97,12 @@
 </style>
 
 <script>
+  function addToCartAndNotify(product) {
+    Cart.add(product);
+    const items = Cart.get();
+    document.getElementById('cart-count').innerText = items ? items.length : 0;
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     const items = Cart.get();
     document.getElementById('cart-count').innerText = items ? items.length : 0;

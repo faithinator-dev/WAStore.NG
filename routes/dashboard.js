@@ -9,6 +9,7 @@ const { requireVendorAuth, attachVendor } = require('../middleware/auth');
 const Order = require('../models/Order');
 const Product = require('../models/Product');
 const Customer = require('../models/Customer');
+const { body, validationResult } = require('express-validator');
 
 // Apply auth guards to all dashboard routes
 router.use(requireVendorAuth, attachVendor);
@@ -61,7 +62,7 @@ router.get('/', async (req, res, next) => {
       totalProducts,
       inStockProducts,
       totalCustomers,
-      monthRevenue: monthRevenue[0]?.total ?? 0,
+      monthRevenue: monthRevenue && monthRevenue.length > 0 ? (monthRevenue[0].total || 0) : 0,
     };
 
     res.render('vendor/dashboard', {
@@ -80,27 +81,44 @@ router.get('/settings', (req, res) => {
 });
 
 // ── POST /dashboard/settings ──────────────────────────────────────────────────
-router.post('/settings', async (req, res, next) => {
-  const { businessName, phone, tagline, themeColor, category, instagram, twitter } = req.body;
-  try {
-    const Vendor = require('../models/Vendor');
-    await Vendor.findByIdAndUpdate(req.vendor._id, {
-      businessName,
-      phone,
-      'storefront.tagline': tagline,
-      'storefront.themeColor': themeColor,
-      'storefront.category': category,
-      'storefront.socialLinks.instagram': instagram,
-      'storefront.socialLinks.twitter': twitter,
-    });
+router.post(
+  '/settings',
+  [
+    body('businessName').trim().escape().notEmpty().withMessage('Business name is required'),
+    body('phone').trim().escape().notEmpty().withMessage('Phone is required'),
+    body('tagline').trim().escape(),
+    body('themeColor').trim().escape(),
+    body('category').trim().escape(),
+    body('instagram').trim().escape(),
+    body('twitter').trim().escape(),
+  ],
+  async (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.render('vendor/settings', { title: 'Store Settings', errors: errors.array() });
+    }
 
-    // Refresh session name
-    req.session.vendor.businessName = businessName;
-    req.session.flashSuccess = 'Store settings updated successfully.';
-    res.redirect('/dashboard/settings');
-  } catch (err) {
-    next(err);
+    const { businessName, phone, tagline, themeColor, category, instagram, twitter } = req.body;
+    try {
+      const Vendor = require('../models/Vendor');
+      await Vendor.findByIdAndUpdate(req.vendor._id, {
+        businessName,
+        phone,
+        'storefront.tagline': tagline,
+        'storefront.themeColor': themeColor,
+        'storefront.category': category,
+        'storefront.socialLinks.instagram': instagram,
+        'storefront.socialLinks.twitter': twitter,
+      });
+
+      // Refresh session name
+      req.session.vendor.businessName = businessName;
+      req.session.flashSuccess = 'Store settings updated successfully.';
+      res.redirect('/dashboard/settings');
+    } catch (err) {
+      next(err);
+    }
   }
-});
+);
 
 module.exports = router;

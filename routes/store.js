@@ -145,13 +145,25 @@ router.get('/:vendorSlug/checkout', resolveStore, (req, res) => {
   });
 });
 
+const Order = require('../models/Order');
+
 // ── GET /store/:vendorSlug/order-success ─────────────────────────────────────
 // Post-order confirmation page
-router.get('/:vendorSlug/order-success', resolveStore, (req, res) => {
-  res.render('store/order-success', {
-    title: `Order Placed — ${req.store.businessName}`,
-    orderNumber: req.query.ref || null,
-  });
+router.get('/:vendorSlug/order-success', resolveStore, async (req, res, next) => {
+  try {
+    const orderNumber = req.query.ref;
+    if (!orderNumber) return res.redirect(`/store/${req.store.slug}`);
+    
+    const order = await Order.findOne({ orderNumber, vendor: req.store._id }).lean();
+    if (!order) return res.redirect(`/store/${req.store.slug}`);
+
+    res.render('store/order-success', {
+      title: `Order Placed — ${req.store.businessName}`,
+      order
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
 module.exports = router;

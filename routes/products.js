@@ -10,9 +10,17 @@ const cloudinary = require('cloudinary').v2;
 const { google } = require('googleapis');
 const { requireVendorAuth, attachVendor } = require('../middleware/auth');
 const Product = require('../models/Product');
+const { body, validationResult } = require('express-validator');
 
 // Apply auth guards
 router.use(requireVendorAuth, attachVendor);
+
+// ── Validation/Sanitization Rules ───────────────────────────────────────────
+const productValidation = [
+  body('name').trim().escape().notEmpty().withMessage('Product name is required'),
+  body('description').trim().escape(),
+  body('price').notEmpty().withMessage('Price is required'),
+];
 
 // Multer setup for image uploads
 const upload = multer({ storage: multer.memoryStorage() });
@@ -33,7 +41,15 @@ router.get('/add', (req, res) => {
 });
 
 // ── POST /dashboard/products/add ─────────────────────────────────────────────
-router.post('/add', upload.single('image_file'), async (req, res, next) => {
+router.post('/add', upload.single('image_file'), productValidation, async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.render('vendor/products/add', { 
+      title: 'Add New Product', 
+      errors: errors.array() 
+    });
+  }
+
   const { name, price, compareAtPrice, stockStatus, description, image_url } = req.body;
   try {
     let finalImageUrl = image_url;
@@ -41,7 +57,13 @@ router.post('/add', upload.single('image_file'), async (req, res, next) => {
     if (req.file) {
       const uploadResult = await new Promise((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
-          { folder: 'wastore_products' },
+          { 
+            folder: 'wastore_products',
+            transformation: [
+              { width: 1000, height: 1000, crop: 'limit' }, // Ensure large images are resized
+              { quality: 'auto', fetch_format: 'auto' }      // Optimize format/quality
+            ]
+          },
           (error, result) => {
             if (error) reject(error);
             else resolve(result);
@@ -82,7 +104,17 @@ router.get('/edit/:id', async (req, res, next) => {
 });
 
 // ── POST /dashboard/products/edit/:id ────────────────────────────────────────
-router.post('/edit/:id', upload.single('image_file'), async (req, res, next) => {
+router.post('/edit/:id', upload.single('image_file'), productValidation, async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const product = await Product.findOne({ _id: req.params.id, vendor: req.vendor._id });
+    return res.render('vendor/products/edit', { 
+      title: 'Edit Product', 
+      product,
+      errors: errors.array() 
+    });
+  }
+
   const { name, price, compareAtPrice, stockStatus, description, image_url } = req.body;
   try {
     const product = await Product.findOne({ _id: req.params.id, vendor: req.vendor._id });

@@ -14,7 +14,7 @@ router.use(requireVendorAuth, attachVendor);
 // ── GET /dashboard/customers ──────────────────────────────────────────────────
 router.get('/', async (req, res, next) => {
   try {
-    const customers = await Customer.find({ vendor: req.vendor._id }).sort({ lastOrderedAt: -1 });
+    const customers = await Customer.find({ vendor: req.vendor._id }).sort({ lastOrderAt: -1 });
     res.render('vendor/customers', { title: 'Customer Database', customers });
   } catch (err) {
     next(err);
