@@ -65,7 +65,7 @@ router.get('/:vendorSlug', resolveStore, async (req, res, next) => {
     const sortQuery = sortMap[sort] || sortMap.displayOrder;
 
     const [products, categories] = await Promise.all([
-      Product.find(filter).sort(sortQuery).lean(),
+      Product.find(filter).sort(sortQuery),
       Product.distinct('category', { vendor: req.store._id, isPublished: true }),
     ]);
 
@@ -90,7 +90,7 @@ router.get('/:vendorSlug/product/:productId', resolveStore, async (req, res, nex
       _id: req.params.productId,
       vendor: req.store._id,
       isPublished: true,
-    }).lean();
+    });
 
     if (!product) {
       return res.status(404).render('errors/404', { title: 'Product Not Found' });
@@ -107,8 +107,7 @@ router.get('/:vendorSlug/product/:productId', resolveStore, async (req, res, nex
       _id: { $ne: product._id },
       stockStatus: 'in_stock',
     })
-      .limit(4)
-      .lean();
+      .limit(4);
 
     // Clean description for meta tag (no HTML, max 160 chars)
     const metaDescription = product.description 
