@@ -137,14 +137,5 @@
 </style>
 
 <script>
-  function addToCartAndNotify(product) {
-    Cart.add(product);
-    const items = Cart.get();
-    document.getElementById('cart-count').innerText = items ? items.length : 0;
-  }
-
-  document.addEventListener('DOMContentLoaded', () => {
-    const items = Cart.get();
-    document.getElementById('cart-count').innerText = items ? items.length : 0;
-  });
+  // Search and Sort logic if needed inline
 </script>

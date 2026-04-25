@@ -6,8 +6,21 @@
 const Cart = {
   get: () => JSON.parse(localStorage.getItem('wastore_cart') || '[]'),
   
-  save: (items) => localStorage.setItem('wastore_cart', JSON.stringify(items)),
+  save: (items) => {
+    localStorage.setItem('wastore_cart', JSON.stringify(items));
+    Cart.updateBadge();
+  },
   
+  updateBadge: () => {
+    const items = Cart.get();
+    const countBadge = document.getElementById('cart-count');
+    if (countBadge) {
+      const total = items.reduce((acc, i) => acc + i.quantity, 0);
+      countBadge.innerText = total;
+      // Show/hide badge if it's 0? (Optional, keeping it simple for now)
+    }
+  },
+
   getItemKey: (item) => {
     const variantStr = item.selectedVariants ? JSON.stringify(item.selectedVariants) : '';
     return `${item.productId}_${variantStr}`;
@@ -26,9 +39,6 @@ const Cart = {
     
     Cart.save(items);
     
-    const countBadge = document.getElementById('cart-count');
-    if (countBadge) countBadge.innerText = items.reduce((acc, i) => acc + i.quantity, 0);
-
     if (window.showToast) {
       showToast(`${product.name} added to cart! 🛍️`);
     }
@@ -39,10 +49,6 @@ const Cart = {
   remove: (itemKey) => {
     let items = Cart.get().filter(i => Cart.getItemKey(i) !== itemKey);
     Cart.save(items);
-    
-    const countBadge = document.getElementById('cart-count');
-    if (countBadge) countBadge.innerText = items.reduce((acc, i) => acc + i.quantity, 0);
-
     window.dispatchEvent(new CustomEvent('cartUpdated'));
 
     if (items.length === 0 && window.location.pathname.endsWith('/cart')) {
@@ -59,17 +65,20 @@ const Cart = {
         return Cart.remove(itemKey);
       }
       Cart.save(items);
-      const countBadge = document.getElementById('cart-count');
-      if (countBadge) countBadge.innerText = items.reduce((acc, i) => acc + i.quantity, 0);
       window.dispatchEvent(new CustomEvent('cartUpdated'));
     }
   },
   
-  clear: () => localStorage.removeItem('wastore_cart')
+  clear: () => {
+    localStorage.removeItem('wastore_cart');
+    Cart.updateBadge();
+  }
 };
 
-// Auto-hide flash messages
+// Auto-hide flash messages & Init Cart Badge
 document.addEventListener('DOMContentLoaded', () => {
+  Cart.updateBadge();
+  
   const flashes = document.querySelectorAll('.flash');
   flashes.forEach(f => {
     setTimeout(() => {
