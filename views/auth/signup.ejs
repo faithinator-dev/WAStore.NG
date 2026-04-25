@@ -16,7 +16,7 @@
         <% } %>
 
         <form action="/auth/signup" method="POST">
-          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <input type="hidden" name="_csrf" value="<%= locals.csrfToken %>">
           <div class="mb-3">
             <label class="form-label fw-semibold small">BUSINESS NAME</label>
             <input type="text" name="businessName" class="form-control border-light-subtle bg-light" placeholder="e.g. Olamide Motors" required>

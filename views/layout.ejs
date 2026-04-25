@@ -66,10 +66,10 @@
     };
 
     // Replace default alerts with Toasts
-    <% if (flashSuccess) { %>
+    <% if (locals.flashSuccess) { %>
       showToast('<%= flashSuccess %>', 'success');
     <% } %>
-    <% if (flashError) { %>
+    <% if (locals.flashError) { %>
       showToast('<%= flashError %>', 'error');
     <% } %>
   </script>
