@@ -54,7 +54,12 @@ router.post('/signup', async (req, res) => {
 
     await vendor.save();
 
-    req.session.vendor = { _id: vendor._id, slug: vendor.slug, businessName: vendor.businessName };
+    req.session.vendor = { 
+      _id: vendor._id, 
+      slug: vendor.slug, 
+      businessName: vendor.businessName,
+      role: vendor.role 
+    };
     req.session.flashSuccess = `Welcome to WaStore, ${vendor.businessName}! 🎉 Your store is live.`;
     res.redirect('/dashboard');
   } catch (err) {
@@ -119,7 +124,12 @@ router.post('/login', async (req, res) => {
     vendor.lastLoginAt = new Date();
     await vendor.save();
 
-    req.session.vendor = { _id: vendor._id, slug: vendor.slug, businessName: vendor.businessName };
+    req.session.vendor = { 
+      _id: vendor._id, 
+      slug: vendor.slug, 
+      businessName: vendor.businessName,
+      role: vendor.role 
+    };
     req.session.flashSuccess = `Welcome back, ${vendor.businessName}!`;
     res.redirect('/dashboard');
   } catch (err) {
