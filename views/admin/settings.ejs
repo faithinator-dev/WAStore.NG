@@ -1,0 +1,95 @@
+<div class="container-fluid">
+  <div class="row">
+    <!-- Sidebar -->
+    <nav class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse px-3 pt-4 min-vh-100">
+      <div class="mb-5 px-3">
+        <h2 class="fw-bold text-success mb-0">WaStore</h2>
+        <p class="small text-muted">Platform Admin</p>
+      </div>
+      
+      <div class="nav flex-column">
+        <a class="nav-link text-white-50 mb-2" href="/admin">
+          <i class="fa fa-chart-line me-2"></i> Overview
+        </a>
+        <a class="nav-link text-white-50 mb-2" href="/admin/vendors">
+          <i class="fa fa-store me-2"></i> Vendors
+        </a>
+        <a class="nav-link text-white-50 mb-2" href="/admin/orders">
+          <i class="fa fa-receipt me-2"></i> All Orders
+        </a>
+        <a class="nav-link text-white active mb-2" href="/admin/settings">
+          <i class="fa fa-user-shield me-2"></i> System Settings
+        </a>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4 bg-light">
+      <div class="mb-4">
+        <h1 class="h2 fw-bold">System Settings <i class="fa fa-cog small text-muted"></i></h1>
+        <p class="text-muted">Configure platform-wide rules and integrations.</p>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-lg-8">
+          <div class="card border-0 shadow-sm p-4 mb-4">
+            <h5 class="fw-bold mb-4">General Configuration</h5>
+            <form>
+              <div class="mb-3">
+                <label class="form-label small fw-bold text-muted">PLATFORM COMMISSION (%)</label>
+                <input type="number" class="form-control" value="0" readonly>
+                <div class="form-text">Current commission charged on every successful transaction.</div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label small fw-bold text-muted">MAINTENANCE MODE</label>
+                <div class="form-check form-switch">
+                  <input class="form-check-switch input" type="checkbox" role="switch" disabled>
+                  <label class="form-check-label">Off</label>
+                </div>
+              </div>
+              <button type="button" class="btn btn-success rounded-pill px-4 mt-3" disabled>Save Changes</button>
+            </form>
+          </div>
+
+          <div class="card border-0 shadow-sm p-4">
+            <h5 class="fw-bold mb-4">Payment Integration (Paystack)</h5>
+            <div class="alert alert-warning small">
+              <i class="fa fa-info-circle me-2"></i> Integration settings are currently managed via <strong>.env</strong> variables for security.
+            </div>
+            <div class="list-group list-group-flush">
+              <div class="list-group-item px-0 py-3 d-flex justify-content-between align-items-center">
+                <div>
+                  <div class="fw-bold">Secret Key</div>
+                  <div class="small text-muted">••••••••••••••••••••••••</div>
+                </div>
+                <span class="badge bg-success">Configured</span>
+              </div>
+              <div class="list-group-item px-0 py-3 d-flex justify-content-between align-items-center">
+                <div>
+                  <div class="fw-bold">Public Key</div>
+                  <div class="small text-muted">••••••••••••••••••••••••</div>
+                </div>
+                <span class="badge bg-success">Configured</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="card border-0 shadow-sm p-4 mb-4 bg-dark text-white">
+            <h5 class="fw-bold mb-3">Admin Info</h5>
+            <p class="small text-white-50">You are currently logged in as a Super Administrator.</p>
+            <div class="d-grid">
+              <button class="btn btn-outline-light btn-sm">Change Admin Password</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<style>
+  .bg-dark { background-color: #1a1d21 !important; }
+  .nav-link:hover { background: rgba(255,255,255,0.1); }
+</style>

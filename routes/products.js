@@ -50,7 +50,7 @@ router.post('/add', upload.single('image_file'), productValidation, async (req, 
     });
   }
 
-  const { name, price, compareAtPrice, stockStatus, description, image_url } = req.body;
+  const { name, price, compareAtPrice, stockStatus, description, image_url, quantity } = req.body;
   try {
     let finalImageUrl = image_url;
 
@@ -79,7 +79,9 @@ router.post('/add', upload.single('image_file'), productValidation, async (req, 
       name,
       price: parseFloat(price.replace(/[^\d.]/g, '')),
       compareAtPrice: compareAtPrice ? parseFloat(compareAtPrice.replace(/[^\d.]/g, '')) : null,
-      stockStatus,
+      stockStatus: (quantity && parseInt(quantity) === 0) ? 'sold_out' : stockStatus,
+      quantity: quantity ? parseInt(quantity) : null,
+      trackQuantity: !!quantity,
       description,
       images: finalImageUrl ? [{ url: finalImageUrl, isPrimary: true }] : [],
     });
@@ -115,7 +117,7 @@ router.post('/edit/:id', upload.single('image_file'), productValidation, async (
     });
   }
 
-  const { name, price, compareAtPrice, stockStatus, description, image_url } = req.body;
+    const { name, price, compareAtPrice, stockStatus, description, image_url, quantity } = req.body;
   try {
     const product = await Product.findOne({ _id: req.params.id, vendor: req.vendor._id });
     if (!product) return res.redirect('/dashboard');
@@ -123,7 +125,9 @@ router.post('/edit/:id', upload.single('image_file'), productValidation, async (
     product.name = name;
     product.price = parseFloat(price.replace(/[^\d.]/g, ''));
     product.compareAtPrice = compareAtPrice ? parseFloat(compareAtPrice.replace(/[^\d.]/g, '')) : null;
-    product.stockStatus = stockStatus;
+    product.stockStatus = (quantity && parseInt(quantity) === 0) ? 'sold_out' : stockStatus;
+    product.quantity = quantity ? parseInt(quantity) : null;
+    product.trackQuantity = !!quantity;
     product.description = description;
 
     if (req.file) {

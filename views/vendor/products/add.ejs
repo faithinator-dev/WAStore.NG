@@ -85,13 +85,20 @@
                 </div>
               </div>
 
-              <div class="mb-4">
-                <label class="form-label fw-bold text-muted small">STOCK STATUS</label>
-                <select name="stockStatus" class="form-select form-select-lg border-light-subtle bg-light">
-                  <option value="in_stock">In Stock</option>
-                  <option value="sold_out">Sold Out</option>
-                  <option value="pre_order">Pre-Order</option>
-                </select>
+              <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                  <label class="form-label fw-bold text-muted small">STOCK STATUS</label>
+                  <select name="stockStatus" class="form-select form-select-lg border-light-subtle bg-light">
+                    <option value="in_stock">In Stock</option>
+                    <option value="sold_out">Sold Out</option>
+                    <option value="pre_order">Pre-Order</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-bold text-muted small">STOCK QUANTITY (OPTIONAL)</label>
+                  <input type="number" name="quantity" class="form-control form-control-lg border-light-subtle bg-light" placeholder="e.g. 50">
+                  <small class="text-muted">Leave blank for unlimited stock</small>
+                </div>
               </div>
 
               <div class="mb-4">

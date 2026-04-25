@@ -143,7 +143,7 @@
             <h5 class="fw-bold mb-3">System Health</h5>
             <div class="d-flex justify-content-between mb-2">
               <span class="text-muted small">Database Status</span>
-              <span class="badge bg-success">Online</span>
+              <span class="badge bg-<%= stats.dbStatus === 'Online' ? 'success' : 'danger' %>"><%= stats.dbStatus %></span>
             </div>
             <div class="d-flex justify-content-between">
               <span class="text-muted small">Mail Server</span>

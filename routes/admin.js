@@ -22,23 +22,33 @@ router.get('/', async (req, res, next) => {
       totalOrders,
       totalRevenue,
       totalProducts,
-      recentVendors
+      recentVendors,
+      dbStatus
     ] = await Promise.all([
       Vendor.countDocuments({ role: 'vendor' }),
       Order.countDocuments(),
       Order.aggregate([
-        { $match: { 'payment.status': 'paid' } },
+        { 
+          $match: { 
+            $or: [
+              { 'payment.status': 'paid' },
+              { status: { $in: ['confirmed', 'shipped', 'delivered'] } }
+            ]
+          } 
+        },
         { $group: { _id: null, total: { $sum: '$total' } } }
       ]),
       Product.countDocuments(),
-      Vendor.find({ role: 'vendor' }).sort({ createdAt: -1 }).limit(5)
+      Vendor.find({ role: 'vendor' }).sort({ createdAt: -1 }).limit(5),
+      mongoose.connection.readyState === 1 ? 'Online' : 'Offline'
     ]);
 
     const stats = {
       totalVendors,
       totalOrders,
       totalRevenue: totalRevenue[0]?.total || 0,
-      totalProducts
+      totalProducts,
+      dbStatus
     };
 
     res.render('admin/dashboard', { 
@@ -87,6 +97,24 @@ router.post('/vendors/:id/toggle-status', async (req, res, next) => {
   } catch (err) {
     next(err);
   }
+});
+
+// ── GET /admin/orders ─────────────────────────────────────────────────────
+router.get('/orders', async (req, res, next) => {
+  try {
+    const orders = await Order.find()
+      .populate('vendor', 'businessName')
+      .populate('customer', 'fullName')
+      .sort({ createdAt: -1 });
+    res.render('admin/orders', { title: 'Platform Orders', orders });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// ── GET /admin/settings ───────────────────────────────────────────────────
+router.get('/settings', (req, res) => {
+  res.render('admin/settings', { title: 'System Settings' });
 });
 
 module.exports = router;

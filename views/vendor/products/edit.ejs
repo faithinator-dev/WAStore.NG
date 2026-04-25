@@ -84,13 +84,20 @@
                 </div>
               </div>
 
-              <div class="mb-4">
-                <label class="form-label fw-bold text-muted small">STOCK STATUS</label>
-                <select name="stockStatus" class="form-select form-select-lg border-light-subtle bg-light">
-                  <option value="in_stock" <%= product.stockStatus === 'in_stock' ? 'selected' : '' %>>In Stock</option>
-                  <option value="sold_out" <%= product.stockStatus === 'sold_out' ? 'selected' : '' %>>Sold Out</option>
-                  <option value="pre_order" <%= product.stockStatus === 'pre_order' ? 'selected' : '' %>>Pre-Order</option>
-                </select>
+              <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                  <label class="form-label fw-bold text-muted small">STOCK STATUS</label>
+                  <select name="stockStatus" class="form-select form-select-lg border-light-subtle bg-light">
+                    <option value="in_stock" <%= product.stockStatus === 'in_stock' ? 'selected' : '' %>>In Stock</option>
+                    <option value="sold_out" <%= product.stockStatus === 'sold_out' ? 'selected' : '' %>>Sold Out</option>
+                    <option value="pre_order" <%= product.stockStatus === 'pre_order' ? 'selected' : '' %>>Pre-Order</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-bold text-muted small">STOCK QUANTITY</label>
+                  <input type="number" name="quantity" class="form-control form-control-lg border-light-subtle bg-light" value="<%= product.quantity %>" placeholder="e.g. 50">
+                  <small class="text-muted">Empty for unlimited stock</small>
+                </div>
               </div>
 
               <div class="mb-4">
