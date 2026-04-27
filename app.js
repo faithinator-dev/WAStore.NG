@@ -110,25 +110,11 @@ app.use(
 
 app.use(cookieParser());
 
-// CSRF Protection (Exclude webhooks)
-const csrfProtection = csrf({ 
-  cookie: false,
-  value: (req) => req.body._csrf || req.query._csrf || req.headers['x-csrf-token'] || req.headers['csrf-token']
-});
-app.use((req, res, next) => {
-  if (req.path === '/webhooks' || req.path.startsWith('/webhooks/')) {
-    next();
-  } else {
-    csrfProtection(req, res, next);
-  }
-});
-
 // ── Global Locals ─────────────────────────────────────────────────────────────
 app.use((req, res, next) => {
   res.locals.vendor = req.session.vendor || null;
   res.locals.flashSuccess = req.session.flashSuccess || null;
   res.locals.flashError = req.session.flashError || null;
-  res.locals.csrfToken = req.csrfToken ? req.csrfToken() : null;
   delete req.session.flashSuccess;
   delete req.session.flashError;
   next();
