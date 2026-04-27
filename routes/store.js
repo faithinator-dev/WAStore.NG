@@ -102,7 +102,10 @@ router.get('/:vendorSlug/product/:productId', resolveStore, async (req, res, nex
     });
 
     if (!product) {
-      return res.status(404).render('errors/404', { title: 'Product Not Found' });
+      return res.status(404).render('errors/product-not-found', { 
+        title: 'Product Not Found',
+        slug: req.params.vendorSlug 
+      });
     }
 
     // Increment view counter (fire-and-forget)

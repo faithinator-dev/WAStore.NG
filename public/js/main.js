@@ -75,9 +75,54 @@ const Cart = {
   }
 };
 
-// Auto-hide flash messages & Init Cart Badge
+const Wishlist = {
+  get: () => JSON.parse(localStorage.getItem('wastore_wishlist') || '[]'),
+  
+  save: (items) => {
+    localStorage.setItem('wastore_wishlist', JSON.stringify(items));
+    Wishlist.updateBadge();
+  },
+
+  updateBadge: () => {
+    const items = Wishlist.get();
+    const countBadge = document.getElementById('wishlist-count');
+    if (countBadge) {
+      countBadge.innerText = items.length;
+      countBadge.classList.toggle('d-none', items.length === 0);
+    }
+  },
+
+  toggle: (product) => {
+    let items = Wishlist.get();
+    const index = items.findIndex(i => i.productId === product.productId);
+    
+    if (index > -1) {
+      items.splice(index, 1);
+      if (window.showToast) showToast('Removed from favorites 💔', 'info');
+    } else {
+      items.push({
+        productId: product.productId,
+        name: product.name,
+        price: product.price,
+        image: product.image
+      });
+      if (window.showToast) showToast('Added to favorites! ❤️');
+    }
+    
+    Wishlist.save(items);
+    window.dispatchEvent(new CustomEvent('wishlistUpdated'));
+    return index === -1; // returns true if added
+  },
+
+  isFavorited: (productId) => {
+    return Wishlist.get().some(i => i.productId === productId);
+  }
+};
+
+// Auto-hide flash messages & Init Badges
 document.addEventListener('DOMContentLoaded', () => {
   Cart.updateBadge();
+  Wishlist.updateBadge();
   
   const flashes = document.querySelectorAll('.flash');
   flashes.forEach(f => {

@@ -4,10 +4,16 @@
     <a class="navbar-brand fw-bold text-vendor-primary" href="#">
       <%= store.businessName %>
     </a>
-    <a href="/store/<%= store.slug %>/cart" class="btn btn-wa position-relative rounded-pill">
-      <i class="fa fa-shopping-cart"></i>
-      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cart-count">0</span>
-    </a>
+    <div class="d-flex align-items-center gap-3">
+      <a href="/store/<%= store.slug %>/wishlist" class="btn btn-light position-relative rounded-pill border">
+        <i class="fa fa-heart text-danger"></i>
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none" id="wishlist-count">0</span>
+      </a>
+      <a href="/store/<%= store.slug %>/cart" class="btn btn-wa position-relative rounded-pill">
+        <i class="fa fa-shopping-cart"></i>
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cart-count">0</span>
+      </a>
+    </div>
   </div>
 </nav>
 
