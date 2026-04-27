@@ -112,7 +112,10 @@ app.use(
 app.use(cookieParser());
 
 // CSRF Protection (Exclude webhooks)
-const csrfProtection = csrf({ cookie: false }); // using session-based by default if cookie is false
+const csrfProtection = csrf({ 
+  cookie: false,
+  value: (req) => req.body._csrf || req.query._csrf || req.headers['x-csrf-token'] || req.headers['csrf-token']
+});
 app.use((req, res, next) => {
   if (req.path === '/webhooks' || req.path.startsWith('/webhooks/')) {
     next();
