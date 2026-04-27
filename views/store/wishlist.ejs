@@ -1,0 +1,76 @@
+<div class="bg-white sticky-top shadow-sm border-bottom nav-wa-glass">
+  <div class="container py-3 d-flex align-items-center">
+    <a href="/store/<%= store.slug %>" class="btn btn-light rounded-pill border py-2 me-3">
+      <i class="fa fa-arrow-left"></i>
+    </a>
+    <h5 class="mb-0 fw-bold">My Favorites ❤️</h5>
+  </div>
+</div>
+
+<div class="container py-5">
+  <div id="wishlist-container">
+    <!-- Wishlist items will be rendered here via JS -->
+    <div class="text-center py-5">
+      <div class="spinner-border text-wa" role="status"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function renderWishlist() {
+    const items = Wishlist.get();
+    const container = document.getElementById('wishlist-container');
+    
+    if (items.length === 0) {
+      container.innerHTML = `
+        <div class="text-center py-5">
+          <i class="fa fa-heart fa-4x text-light mb-4"></i>
+          <h3 class="fw-bold">Your wishlist is empty</h3>
+          <p class="text-muted mb-4">Save items you love to find them easily later.</p>
+          <a href="/store/<%= store.slug %>" class="btn btn-wa px-5 py-2 rounded-pill">Explore Products</a>
+        </div>
+      `;
+      return;
+    }
+
+    let html = '<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">';
+    items.forEach(item => {
+      html += `
+        <div class="col" id="wishlist-item-${item.productId}">
+          <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden">
+            <div class="position-relative">
+              <img src="${item.image}" class="card-img-top" style="aspect-ratio: 1/1; object-fit: cover;">
+              <button class="position-absolute top-0 end-0 m-2 btn btn-white rounded-circle shadow-sm" 
+                onclick="Wishlist.toggle({ productId: '${item.productId}' }); renderWishlist();">
+                <i class="fas fa-heart text-danger"></i>
+              </button>
+            </div>
+            <div class="card-body">
+              <h6 class="fw-bold mb-1">${item.name}</h6>
+              <div class="text-wa fw-bold mb-3">₦${item.price.toLocaleString()}</div>
+              <div class="d-grid gap-2">
+                <button class="btn btn-wa rounded-pill py-2" onclick="Cart.add({ productId: '${item.productId}', name: '${item.name.replace(/'/g, "\\'")}', price: ${item.price}, image: '${item.image}' })">
+                  <i class="fa fa-shopping-cart me-2"></i> Add to Cart
+                </button>
+                <a href="/store/<%= store.slug %>/product/${item.productId}" class="btn btn-light btn-sm rounded-pill border">View Details</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+    html += '</div>';
+    container.innerHTML = html;
+  }
+
+  document.addEventListener('DOMContentLoaded', renderWishlist);
+  window.addEventListener('wishlistUpdated', renderWishlist);
+</script>
+
+<style>
+  .btn-white { background: white; border: none; }
+  :root { --vendor-primary: <%= store.storefront.themeColor || '#25D366' %>; }
+  .text-wa { color: var(--vendor-primary) !important; }
+  .btn-wa { background-color: var(--vendor-primary); color: white; border: none; }
+  .btn-wa:hover { opacity: 0.9; color: white; }
+</style>

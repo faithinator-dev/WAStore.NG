@@ -301,4 +301,23 @@ router.post('/:vendorSlug/initiate-payment', validateCheckoutInput, handleValida
   }
 });
 
+// ── POST /checkout/:vendorSlug/cancel-order/:id ──────────────────────────────
+router.post('/:vendorSlug/cancel-order/:id', async (req, res, next) => {
+  try {
+    const order = await Order.findOne({ _id: req.params.id, status: 'pending' });
+    if (!order) {
+      req.session.flashError = 'Order cannot be cancelled as it is already being processed.';
+      return res.redirect('back');
+    }
+
+    order.status = 'cancelled';
+    await order.save();
+
+    req.session.flashSuccess = 'Order cancelled successfully.';
+    res.redirect(`/store/${req.params.vendorSlug}`);
+  } catch (err) {
+    next(err);
+  }
+});
+
 module.exports = router;

@@ -19,7 +19,6 @@ const cloudinary = require('cloudinary').v2;
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const cookieParser = require('cookie-parser');
-const csrf = require('csurf');
 
 // ── Route Imports ─────────────────────────────────────────────────────────────
 const authRoutes = require('./routes/auth');

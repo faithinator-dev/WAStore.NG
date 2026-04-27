@@ -140,10 +140,18 @@ router.get('/:vendorSlug/product/:productId', resolveStore, async (req, res, nex
 });
 
 // ── GET /store/:vendorSlug/cart ───────────────────────────────────────────────
-// Cart page (cart data stored client-side in localStorage, rendered server-side shell)
+// Cart page
 router.get('/:vendorSlug/cart', resolveStore, (req, res) => {
   res.render('store/cart', {
     title: `Cart — ${req.store.businessName}`,
+  });
+});
+
+// ── GET /store/:vendorSlug/wishlist ───────────────────────────────────────────
+// Wishlist page
+router.get('/:vendorSlug/wishlist', resolveStore, (req, res) => {
+  res.render('store/wishlist', {
+    title: `My Favorites — ${req.store.businessName}`,
   });
 });
 

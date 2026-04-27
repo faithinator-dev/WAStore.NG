@@ -28,8 +28,13 @@
         <div class="row g-0">
           <div class="col-md-6 border-end">
             <!-- Main Image -->
-            <div class="main-image-container">
+            <div class="main-image-container position-relative">
               <img id="main-product-image" src="<%= product.primaryImage %>" class="img-fluid w-100" alt="<%= product.name %>" style="object-fit: cover; min-height: 400px;">
+              <button class="position-absolute top-0 end-0 m-3 btn btn-white rounded-circle shadow-sm d-flex align-items-center justify-content-center" 
+                style="width: 45px; height: 45px;"
+                onclick="Wishlist.toggle({ productId: '<%= product._id %>', name: '<%= product.name.replace(/'/g, "\\'") %>', price: <%= product.price %>, image: '<%= product.primaryImage %>' }); updateWishlistIcon();">
+                <i id="wishlist-heart-icon" class="far fa-heart text-danger fs-4"></i>
+              </button>
             </div>
             
             <!-- Thumbnail Gallery -->

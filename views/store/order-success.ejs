@@ -88,13 +88,20 @@
       </div>
 
       <!-- Actions -->
-      <div class="d-flex gap-3 justify-content-center">
-        <a href="/store/<%= store.slug %>" class="btn btn-outline-wa btn-lg rounded-pill">
+      <div class="d-flex flex-column flex-md-row gap-3 justify-content-center mt-5">
+        <a href="/store/<%= store.slug %>" class="btn btn-outline-wa btn-lg rounded-pill px-4">
           <i class="fas fa-shopping-bag me-2"></i> Continue Shopping
         </a>
-        <a href="https://wa.me/<%= store.phone.replace(/[^0-9]/g, '') %>?text=Order%20ID:%20<%= order.orderNumber %>" target="_blank" class="btn btn-wa btn-lg rounded-pill">
+        <a href="https://wa.me/<%= store.phone.replace(/[^0-9]/g, '') %>?text=Order%20ID:%20<%= order.orderNumber %>" target="_blank" class="btn btn-wa btn-lg rounded-pill px-4 text-white">
           <i class="fab fa-whatsapp me-2"></i> Contact Vendor
         </a>
+        <% if (order.status === 'pending') { %>
+          <form action="/checkout/<%= store.slug %>/cancel-order/<%= order._id %>" method="POST" onsubmit="return confirm('Are you sure you want to cancel this order?');" class="d-inline">
+            <button type="submit" class="btn btn-outline-danger btn-lg rounded-pill px-4 border-2 w-100">
+              <i class="fa fa-times me-2"></i> Cancel Order
+            </button>
+          </form>
+        <% } %>
       </div>
     </div>
   </div>
