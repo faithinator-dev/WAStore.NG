@@ -143,17 +143,22 @@ app.use('/admin', adminRoutes);
 // ── SEO: Dynamic Sitemap ──────────────────────────────────────────────────────
 app.get('/sitemap.xml', async (req, res) => {
   try {
-    const vendors = await Vendor.find({ isActive: true }).select('slug updatedAt');
+    const [vendors, products] = await Promise.all([
+      Vendor.find({ isActive: true }).select('slug updatedAt'),
+      Product.find({ isPublished: true }).populate('vendor', 'slug').select('updatedAt vendor')
+    ]);
+
     const baseUrl = `${req.protocol}://${req.get('host')}`;
     
     let xml = `<?xml version="1.0" encoding="UTF-8"?>
     <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
       <url>
-        <loc>${baseUrl}</url>
+        <loc>${baseUrl}</loc>
         <changefreq>daily</changefreq>
         <priority>1.0</priority>
       </url>`;
 
+    // Add Vendor Storefronts
     vendors.forEach(v => {
       xml += `
       <url>
@@ -164,10 +169,24 @@ app.get('/sitemap.xml', async (req, res) => {
       </url>`;
     });
 
+    // Add Individual Product Pages
+    products.forEach(p => {
+      if (p.vendor) {
+        xml += `
+        <url>
+          <loc>${baseUrl}/store/${p.vendor.slug}/product/${p._id}</loc>
+          <lastmod>${p.updatedAt.toISOString().split('T')[0]}</lastmod>
+          <changefreq>weekly</changefreq>
+          <priority>0.6</priority>
+        </url>`;
+      }
+    });
+
     xml += '\n</urlset>';
     res.header('Content-Type', 'application/xml');
     res.send(xml);
   } catch (err) {
+    console.error('Sitemap Error:', err);
     res.status(500).end();
   }
 });
