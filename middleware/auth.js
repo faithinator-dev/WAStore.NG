@@ -8,6 +8,12 @@ exports.requireVendorAuth = (req, res, next) => {
     req.session.flashError = 'Please log in to access your dashboard.';
     return res.redirect('/auth/login');
   }
+
+  // Restrict access if email not verified
+  if (req.session.vendor.emailVerified === false) {
+    return res.redirect('/auth/verify-notice');
+  }
+
   next();
 };
 
@@ -19,7 +25,6 @@ const Vendor = require('../models/Vendor');
 
 exports.attachVendor = async (req, res, next) => {
   try {
-    // Validate session vendor exists and has _id
     if (!req.session?.vendor?._id) {
       req.session.flashError = 'Session expired. Please log in again.';
       return res.redirect('/auth/login');
@@ -33,6 +38,10 @@ exports.attachVendor = async (req, res, next) => {
       });
       return;
     }
+
+    // Sync session state
+    req.session.vendor.emailVerified = vendor.emailVerified;
+
     res.locals.vendor = vendor;
     req.vendor = vendor;
     next();

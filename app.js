@@ -27,10 +27,12 @@ const productRoutes = require('./routes/products');
 const orderRoutes = require('./routes/orders');
 const customerRoutes = require('./routes/customers');
 const storeRoutes = require('./routes/store');
+const customerPortalRoutes = require('./routes/customer-portal');
 const checkoutRoutes = require('./routes/checkout');
 const webhookRoutes = require('./routes/webhooks');
 const adminRoutes = require('./routes/admin');
 const Vendor = require('./models/Vendor');
+const Product = require('./models/Product');
 
 const app = express();
 
@@ -115,6 +117,7 @@ app.use((req, res, next) => {
   res.locals.vendor = req.session.vendor || null;
   res.locals.flashSuccess = req.session.flashSuccess || null;
   res.locals.flashError = req.session.flashError || null;
+  res.locals.currentPath = req.path;
   delete req.session.flashSuccess;
   delete req.session.flashError;
   next();
@@ -136,6 +139,7 @@ app.use('/dashboard/products', productRoutes);
 app.use('/dashboard/orders', orderRoutes);
 app.use('/dashboard/customers', customerRoutes);
 app.use('/store', storeRoutes);
+app.use('/store/:vendorSlug/account', customerPortalRoutes);
 app.use('/checkout', checkoutRoutes);
 app.use('/webhooks', webhookRoutes);
 app.use('/admin', adminRoutes);
@@ -153,7 +157,7 @@ app.get('/sitemap.xml', async (req, res) => {
     let xml = `<?xml version="1.0" encoding="UTF-8"?>
     <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
       <url>
-        <loc>${baseUrl}</loc>
+        <loc>${baseUrl}</url>
         <changefreq>daily</changefreq>
         <priority>1.0</priority>
       </url>`;

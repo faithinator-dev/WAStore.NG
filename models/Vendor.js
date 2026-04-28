@@ -67,6 +67,12 @@ const vendorSchema = new mongoose.Schema(
         instagram: { type: String, default: '' },
         twitter: { type: String, default: '' },
       },
+      deliveryZones: [
+        {
+          name: { type: String, required: true },
+          fee: { type: Number, required: true, default: 0 },
+        }
+      ],
     },
 
     // --- Trust & Verification ---
@@ -92,6 +98,9 @@ const vendorSchema = new mongoose.Schema(
 
     // --- Account Status ---
     isActive: { type: Boolean, default: true },
+    emailVerified: { type: Boolean, default: false },
+    emailVerificationToken: { type: String, default: null },
+    emailVerificationExpires: { type: Date, default: null },
     lastLoginAt: { type: Date, default: null },
     loginAttempts: { type: Number, default: 0 },
     lockUntil: { type: Date, default: null },

@@ -8,7 +8,7 @@ const crypto = require('crypto');
 const router = express.Router();
 const { body, validationResult } = require('express-validator');
 const Vendor = require('../models/Vendor');
-const { sendResetEmail } = require('../utils/mail');
+const { sendResetEmail, sendVerificationEmail } = require('../utils/mail');
 
 // ── GET /auth/signup ──────────────────────────────────────────────────────────
 router.get('/signup', (req, res) => {
@@ -51,12 +51,15 @@ router.post('/signup', [
       });
     }
 
-    // Ensure slug uniqueness — append random suffix if taken
+    // Ensure slug uniqueness
     let finalSlug = slug;
     const slugExists = await Vendor.findOne({ slug });
     if (slugExists) {
       finalSlug = `${slug}-${Math.random().toString(36).slice(2, 6)}`;
     }
+
+    // Email verification token
+    const verificationToken = crypto.randomBytes(32).toString('hex');
 
     const vendor = new Vendor({
       businessName,
@@ -64,25 +67,51 @@ router.post('/signup', [
       email,
       phone,
       slug: finalSlug,
-      passwordHash: password, // hashed in pre-save hook
+      passwordHash: password,
+      emailVerificationToken: verificationToken,
+      emailVerificationExpires: Date.now() + 24 * 3600000, // 24 hours
     });
 
     await vendor.save();
 
-    req.session.vendor = { 
-      _id: vendor._id, 
-      slug: vendor.slug, 
-      businessName: vendor.businessName,
-      role: vendor.role 
-    };
-    req.session.flashSuccess = `Welcome to WaStore, ${vendor.businessName}! 🎉 Your store is live.`;
-    res.redirect('/dashboard');
+    // Send Verification Email
+    const verifyUrl = `${req.protocol}://${req.get('host')}/auth/verify-email/${verificationToken}`;
+    await sendVerificationEmail(vendor.email, verifyUrl);
+
+    req.session.flashSuccess = `Account created! 📧 Please check your email to verify your address.`;
+    res.redirect('/auth/login');
   } catch (err) {
     console.error('Signup error:', err);
     res.render('auth/signup', {
       title: 'Create Your WaStore',
       errors: [{ msg: 'Something went wrong. Please try again.' }],
     });
+  }
+});
+
+// ── GET /auth/verify-email/:token ──────────────────────────────────────────
+router.get('/verify-email/:token', async (req, res) => {
+  try {
+    const vendor = await Vendor.findOne({
+      emailVerificationToken: req.params.token,
+      emailVerificationExpires: { $gt: Date.now() },
+    });
+
+    if (!vendor) {
+      req.session.flashError = 'Verification link is invalid or has expired.';
+      return res.redirect('/auth/login');
+    }
+
+    vendor.emailVerified = true;
+    vendor.emailVerificationToken = null;
+    vendor.emailVerificationExpires = null;
+    await vendor.save();
+
+    req.session.flashSuccess = 'Email verified successfully! You can now log in.';
+    res.redirect('/auth/login');
+  } catch (err) {
+    console.error('Verification error:', err);
+    res.redirect('/auth/login');
   }
 });
 
@@ -251,6 +280,37 @@ router.post('/logout', (req, res) => {
   req.session.destroy(() => {
     res.redirect('/auth/login');
   });
+});
+
+// ── GET /auth/verify-notice ──────────────────────────────────────────────────
+router.get('/verify-notice', (req, res) => {
+  if (!req.session?.vendor) return res.redirect('/auth/login');
+  if (req.session.vendor.emailVerified) return res.redirect('/dashboard');
+  res.render('auth/verify-notice', { title: 'Verify Your Email' });
+});
+
+// ── POST /auth/resend-verification ───────────────────────────────────────────
+router.post('/resend-verification', async (req, res) => {
+  try {
+    if (!req.session?.vendor) return res.redirect('/auth/login');
+
+    const vendor = await Vendor.findById(req.session.vendor._id);
+    if (vendor.emailVerified) return res.redirect('/dashboard');
+
+    const token = crypto.randomBytes(32).toString('hex');
+    vendor.emailVerificationToken = token;
+    vendor.emailVerificationExpires = Date.now() + 24 * 3600000;
+    await vendor.save();
+
+    const verifyUrl = `${req.protocol}://${req.get('host')}/auth/verify-email/${token}`;
+    await sendVerificationEmail(vendor.email, verifyUrl);
+
+    req.session.flashSuccess = 'A new verification link has been sent to your email.';
+    res.redirect('/auth/verify-notice');
+  } catch (err) {
+    console.error('Resend error:', err);
+    res.redirect('/auth/verify-notice');
+  }
 });
 
 module.exports = router;

@@ -105,7 +105,18 @@ router.post(
       return res.render('vendor/settings', { title: 'Store Settings', errors: errors.array() });
     }
 
-    const { businessName, phone, tagline, themeColor, category, instagram, twitter } = req.body;
+    const { businessName, phone, tagline, themeColor, category, instagram, twitter, zone_names = [], zone_fees = [] } = req.body;
+    
+    // Map delivery zones
+    const deliveryZones = [];
+    if (Array.isArray(zone_names)) {
+      zone_names.forEach((name, i) => {
+        if (name.trim()) {
+          deliveryZones.push({ name: name.trim(), fee: Number(zone_fees[i]) || 0 });
+        }
+      });
+    }
+
     try {
       const Vendor = require('../models/Vendor');
       await Vendor.findByIdAndUpdate(req.vendor._id, {
@@ -116,6 +127,7 @@ router.post(
         'storefront.category': category,
         'storefront.socialLinks.instagram': instagram,
         'storefront.socialLinks.twitter': twitter,
+        'storefront.deliveryZones': deliveryZones,
       });
 
       // Refresh session name

@@ -111,15 +111,30 @@
         city: document.getElementById('city').value,
         state: document.getElementById('state').value,
         email: document.getElementById('email').value || null,
-        additionalNotes: document.getElementById('additionalNotes').value || ''
+        additionalNotes: document.getElementById('additionalNotes').value || '',
+        deliveryZone: document.getElementById('deliveryZone').value
       },
       items: cart.map(i => ({ 
         productId: i.productId, 
         quantity: i.quantity,
         selectedVariants: i.selectedVariants || {}
       })),
-      deliveryFee: 0
+      deliveryFee: Number(document.getElementById('deliveryZone').selectedOptions[0].dataset.fee) || 0
     };
+...
+<script>
+  function updateTotalWithDelivery() {
+    const cart = Cart.get();
+    const subtotal = cart.reduce((acc, i) => acc + (i.price * i.quantity), 0);
+    const zoneSelect = document.getElementById('deliveryZone');
+    const fee = Number(zoneSelect.selectedOptions[0].dataset.fee) || 0;
+    const total = subtotal + fee;
+    
+    document.getElementById('submit-btn').innerText = `Place Order — ₦${total.toLocaleString()}`;
+  }
+
+  document.addEventListener('DOMContentLoaded', updateTotalWithDelivery);
+</script>
 
     try {
       const endpoint = method === 'whatsapp' ? '/checkout/<%= store.slug %>/whatsapp' : '/checkout/<%= store.slug %>/initiate-payment';

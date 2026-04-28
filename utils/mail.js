@@ -55,3 +55,47 @@ exports.sendResetEmail = async (to, resetUrl) => {
     throw error; // Re-throw to be handled by the route's next(err)
   }
 };
+
+/**
+ * Send an email verification link
+ * @param {string} to - Recipient email
+ * @param {string} verifyUrl - The URL for verifying the email
+ */
+exports.sendVerificationEmail = async (to, verifyUrl) => {
+  const mailOptions = {
+    from: `"WaStore Support" <${process.env.EMAIL_USER}>`,
+    to,
+    subject: 'Verify Your Email - WaStore',
+    html: `
+      <div style="font-family: sans-serif; max-width: 600px; margin: auto; border: 1px solid #eee; padding: 20px; border-radius: 10px;">
+        <h2 style="color: #25D366; text-align: center;">WaStore</h2>
+        <p>Hello,</p>
+        <p>Thank you for joining WaStore! Please click the button below to verify your email address and activate your showroom.</p>
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${verifyUrl}" style="background-color: #25D366; color: white; padding: 12px 25px; text-decoration: none; border-radius: 50px; font-weight: bold;">Verify Email</a>
+        </div>
+        <p>If the button above doesn't work, copy and paste this link into your browser:</p>
+        <p style="word-break: break-all; color: #888;">${verifyUrl}</p>
+        <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+        <p style="font-size: 12px; color: #888; text-align: center;">Nigerian Commerce, Global Impact.</p>
+      </div>
+    `,
+  };
+
+  if (process.env.NODE_ENV === 'development') {
+    console.log('--- DEVELOPMENT MAIL PREVIEW ---');
+    console.log(`To: ${to}`);
+    console.log(`Verify URL: ${verifyUrl}`);
+    console.log('--------------------------------');
+    return;
+  }
+
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log('✅ Verification email sent:', info.messageId);
+    return info;
+  } catch (error) {
+    console.error('❌ Mail Error:', error.message);
+    throw error;
+  }
+};

@@ -91,6 +91,28 @@ router.get('/:vendorSlug', resolveStore, async (req, res, next) => {
   }
 });
 
+// ── GET /store/:vendorSlug/autocomplete ──────────────────────────────────────
+router.get('/:vendorSlug/autocomplete', resolveStore, async (req, res) => {
+  try {
+    const { q } = req.query;
+    if (!q || q.length < 2) return res.json([]);
+
+    const escapedSearch = escapeRegex(q.trim());
+    const suggestions = await Product.find({
+      vendor: req.store._id,
+      isPublished: true,
+      name: { $regex: escapedSearch, $options: 'i' }
+    })
+    .select('name primaryImage price')
+    .limit(5)
+    .lean();
+
+    res.json(suggestions);
+  } catch (err) {
+    res.status(500).json({ error: 'Search failed' });
+  }
+});
+
 // ── GET /store/:vendorSlug/product/:productId ─────────────────────────────────
 // Product detail page
 router.get('/:vendorSlug/product/:productId', resolveStore, async (req, res, next) => {

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
 /**
  * Customer — scoped to a single vendor (multi-tenant CRM).
@@ -23,6 +24,10 @@ const customerSchema = new mongoose.Schema(
       required: [true, 'Customer phone number is required'],
       trim: true,
     },
+    passwordHash: { type: String, select: false },
+    lastLoginAt: { type: Date, default: null },
+    loginAttempts: { type: Number, default: 0 },
+    lockUntil: { type: Date, default: null },
 
     // ── Address Book (last-used shown first for checkout convenience) ─────────
     addresses: [
@@ -79,6 +84,13 @@ customerSchema.virtual('tier').get(function () {
   return 'new';
 });
 
+// ── Pre-save hooks ────────────────────────────────────────────────────────────
+customerSchema.pre('save', async function (next) {
+  if (!this.isModified('passwordHash') || !this.passwordHash) return next();
+  this.passwordHash = await bcrypt.hash(this.passwordHash, 12);
+  next();
+});
+
 // ── Instance Methods ──────────────────────────────────────────────────────────
 
 /**
@@ -90,6 +102,11 @@ customerSchema.methods.recordPurchase = async function (orderTotal) {
   this.lastOrderAt = new Date();
   this.averageOrderValue = Math.round(this.totalSpend / this.totalOrders);
   await this.save();
+};
+
+customerSchema.methods.comparePassword = async function (candidatePassword) {
+  if (!this.passwordHash) return false;
+  return bcrypt.compare(candidatePassword, this.passwordHash);
 };
 
 // ── Indexes ───────────────────────────────────────────────────────────────────

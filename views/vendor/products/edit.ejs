@@ -139,15 +139,35 @@
           <div class="card p-4 border-0 bg-danger-subtle shadow-sm mb-4">
             <h5 class="fw-bold text-danger mb-3"><i class="fa fa-exclamation-triangle me-2"></i> Danger Zone</h5>
             <p class="small text-muted mb-4">Once you delete a product, it cannot be recovered. Customers will no longer be able to see or buy this item.</p>
-            <form action="/dashboard/products/<%= product._id %>?_method=DELETE" method="POST" onsubmit="return confirm('Permanently delete this product?');">
+            <form id="delete-product-form" action="/dashboard/products/<%= product._id %>?_method=DELETE" method="POST">
               <input type="hidden" name="_csrf" value="<%= locals.csrfToken %>">
-              <button type="submit" class="btn btn-danger w-100 rounded-pill fw-bold">
+              <button type="button" class="btn btn-danger w-100 rounded-pill fw-bold" onclick="confirmDelete()">
                 <i class="fa fa-trash me-2"></i> Delete Product
               </button>
             </form>
-          </div>
+            </div>
+            ...
+            <script>
+            function confirmDelete() {
+            Swal.fire({
+            title: 'Are you sure?',
+            text: "This product will be permanently deleted!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!',
+            borderRadius: '20px'
+            }).then((result) => {
+            if (result.isConfirmed) {
+            document.getElementById('delete-product-form').submit();
+            }
+            });
+            }
+            </script>
 
-          <div class="card p-4 border-0 shadow-sm">
+            <style>
+
             <h5 class="fw-bold mb-3">Stats</h5>
             <div class="list-group list-group-flush small">
               <div class="list-group-item d-flex justify-content-between px-0">
