@@ -38,24 +38,45 @@ router.post('/paystack', async (req, res) => {
     // Handle only successful charge events
     if (event === 'charge.success') {
       const reference = data.reference;
+      const paidAmount = data.amount; // Amount in kobo (₦ * 100)
       
-      const order = await Order.findOneAndUpdate(
-        { 'payment.reference': reference },
-        { 
-          $set: { 
-            'payment.status': 'paid', 
-            'payment.paidAt': new Date(),
-            status: 'confirmed' 
-          } 
-        },
-        { new: true }
-      );
+      const order = await Order.findOne({ 'payment.reference': reference });
       
-      if (order) {
-        console.log(`✅ Payment successful for reference: ${reference}. Order ${order._id} confirmed.`);
-      } else {
+      if (!order) {
         console.warn(`⚠️ Payment successful but order not found for reference: ${reference}`);
+        return res.sendStatus(200); // Still acknowledge webhook to prevent retries
       }
+
+      // ✅ CRITICAL: Verify amount matches order total
+      const expectedAmount = Math.round(order.total * 100); // Convert to kobo
+      if (paidAmount !== expectedAmount) {
+        console.error(
+          `🚨 SECURITY ALERT: Amount mismatch for order ${order._id}. ` +
+          `Expected: ₦${order.total} (${expectedAmount} kobo), ` +
+          `Received: ₦${paidAmount / 100} (${paidAmount} kobo). ` +
+          `Reference: ${reference}. PAYMENT REJECTED.`
+        );
+        // Mark as failed to prevent order confirmation
+        await Order.findByIdAndUpdate(order._id, {
+          $set: { 'payment.status': 'failed' }
+        });
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Payment amount does not match order total' 
+        });
+      }
+
+      // Amount verified - safe to confirm order
+      await Order.findByIdAndUpdate(order._id, {
+        $set: {
+          'payment.status': 'paid',
+          'payment.amount': paidAmount / 100, // Store in naira
+          'payment.paidAt': new Date(),
+          status: 'confirmed'
+        }
+      });
+      
+      console.log(`✅ Payment verified and confirmed for reference: ${reference}. Order ${order._id} confirmed.`);
     } else if (event === 'charge.failed') {
       const reference = data.reference;
       await Order.findOneAndUpdate(

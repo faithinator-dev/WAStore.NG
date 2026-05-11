@@ -5,6 +5,7 @@
 
 const express = require('express');
 const router = express.Router();
+const QRCode = require('qrcode');
 const { requireVendorAuth, attachVendor } = require('../middleware/auth');
 const Order = require('../models/Order');
 const Product = require('../models/Product');
@@ -20,6 +21,16 @@ router.get('/', async (req, res, next) => {
     const vendorId = req.vendor._id;
     const now = new Date();
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    // Generate QR code for store URL
+    const storeUrl = `${req.protocol}://${req.get('host')}/store/${req.vendor.slug}`;
+    const qrCodeDataUrl = await QRCode.toDataURL(storeUrl, {
+      errorCorrectionLevel: 'H',
+      type: 'image/png',
+      quality: 0.95,
+      margin: 2,
+      width: 300,
+    });
 
     // Parallel queries for dashboard KPIs
     const [
@@ -76,6 +87,8 @@ router.get('/', async (req, res, next) => {
       stats,
       recentOrders,
       lowStockProducts,
+      qrCodeDataUrl,
+      storeUrl,
     });
   } catch (err) {
     next(err);
