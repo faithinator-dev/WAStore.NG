@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Help Center - FAQs & Support</title>
+  <%- include('partials/styles') %>
+</head>
+<body>
+  <%- include('partials/navbar') %>
+
+  <!-- Hero Section -->
+  <section style="background: linear-gradient(135deg, #25D366 0%, #128C52 100%); color: white; padding: 60px 0; text-align: center; animation: fadeInUp 0.8s ease;">
+    <div class="container">
+      <h1 style="font-size: 2.5rem; font-weight: 700; margin-bottom: 1rem;">Help Center</h1>
+      <p style="font-size: 1.1rem; margin-bottom: 2rem; opacity: 0.95;">Find answers to common questions</p>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section style="padding: 80px 0;">
+    <div class="container">
+      <div style="max-width: 800px; margin: 0 auto;">
+        <!-- FAQ Item 1 -->
+        <div style="background: white; border-radius: 15px; margin-bottom: 2rem; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08); animation: fadeInUp 0.8s ease; animation-delay: 0.1s; animation-fill-mode: both;">
+          <button style="width: 100%; padding: 25px; background: #f8f9fa; border: none; border-bottom: 1px solid #eee; cursor: pointer; font-weight: 700; font-size: 1.05rem; color: #333; text-align: left; transition: all 0.3s ease; border-radius: 15px 15px 0 0; display: flex; justify-content: space-between; align-items: center;" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'; this.style.background = this.nextElementSibling.style.display === 'block' ? '#e8f5e9' : '#f8f9fa'">
+            <span>How do I get started with WAStore?</span>
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div style="padding: 25px; display: none;">
+            <p style="color: #666; line-height: 1.8; margin: 0;">Getting started is easy! Simply sign up with your email, verify your account, and create your store. Then add your products and start selling. Our onboarding wizard will guide you through each step.</p>
+          </div>
+        </div>
+
+        <!-- FAQ Item 2 -->
+        <div style="background: white; border-radius: 15px; margin-bottom: 2rem; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08); animation: fadeInUp 0.8s ease; animation-delay: 0.2s; animation-fill-mode: both;">
+          <button style="width: 100%; padding: 25px; background: #f8f9fa; border: none; border-bottom: 1px solid #eee; cursor: pointer; font-weight: 700; font-size: 1.05rem; color: #333; text-align: left; transition: all 0.3s ease; border-radius: 15px 15px 0 0; display: flex; justify-content: space-between; align-items: center;" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'; this.style.background = this.nextElementSibling.style.display === 'block' ? '#e8f5e9' : '#f8f9fa'">
+            <span>Do you charge a setup fee?</span>
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div style="padding: 25px; display: none;">
+            <p style="color: #666; line-height: 1.8; margin: 0;">No! There's no setup fee or hidden charges. The Starter plan is completely free forever. When you upgrade to Pro, you'll only pay ₦4,999 per month, with no additional fees.</p>
+          </div>
+        </div>
+
+        <!-- FAQ Item 3 -->
+        <div style="background: white; border-radius: 15px; margin-bottom: 2rem; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08); animation: fadeInUp 0.8s ease; animation-delay: 0.3s; animation-fill-mode: both;">
+          <button style="width: 100%; padding: 25px; background: #f8f9fa; border: none; border-bottom: 1px solid #eee; cursor: pointer; font-weight: 700; font-size: 1.05rem; color: #333; text-align: left; transition: all 0.3s ease; border-radius: 15px 15px 0 0; display: flex; justify-content: space-between; align-items: center;" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'; this.style.background = this.nextElementSibling.style.display === 'block' ? '#e8f5e9' : '#f8f9fa'">
+            <span>How do I integrate Paystack for payments?</span>
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div style="padding: 25px; display: none;">
+            <p style="color: #666; line-height: 1.8; margin: 0;">Payment integration is simple! Go to Settings > Payment Integration, click on Paystack, and follow the authentication steps. You'll need your Paystack API keys, which you can get from your Paystack dashboard. Our support team can help if you get stuck.</p>
+          </div>
+        </div>
+
+        <!-- FAQ Item 4 -->
+        <div style="background: white; border-radius: 15px; margin-bottom: 2rem; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08); animation: fadeInUp 0.8s ease; animation-delay: 0.1s; animation-fill-mode: both;">
+          <button style="width: 100%; padding: 25px; background: #f8f9fa; border: none; border-bottom: 1px solid #eee; cursor: pointer; font-weight: 700; font-size: 1.05rem; color: #333; text-align: left; transition: all 0.3s ease; border-radius: 15px 15px 0 0; display: flex; justify-content: space-between; align-items: center;" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'; this.style.background = this.nextElementSibling.style.display === 'block' ? '#e8f5e9' : '#f8f9fa'">
+            <span>Can I change my store URL/slug?</span>
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div style="padding: 25px; display: none;">
+            <p style="color: #666; line-height: 1.8; margin: 0;">Yes, you can change your store slug anytime from Settings > Store Information. However, changing it will affect your store URL, so make sure to update any links you've shared with customers.</p>
+          </div>
+        </div>
+
+        <!-- FAQ Item 5 -->
+        <div style="background: white; border-radius: 15px; margin-bottom: 2rem; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08); animation: fadeInUp 0.8s ease; animation-delay: 0.2s; animation-fill-mode: both;">
+          <button style="width: 100%; padding: 25px; background: #f8f9fa; border: none; border-bottom: 1px solid #eee; cursor: pointer; font-weight: 700; font-size: 1.05rem; color: #333; text-align: left; transition: all 0.3s ease; border-radius: 15px 15px 0 0; display: flex; justify-content: space-between; align-items: center;" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'; this.style.background = this.nextElementSibling.style.display === 'block' ? '#e8f5e9' : '#f8f9fa'">
+            <span>How long does it take to receive payments?</span>
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div style="padding: 25px; display: none;">
+            <p style="color: #666; line-height: 1.8; margin: 0;">Paystack processes payouts daily. Funds are typically settled to your bank account within 24-48 hours. You can track your balance and transaction history from your Dashboard.</p>
+          </div>
+        </div>
+
+        <!-- FAQ Item 6 -->
+        <div style="background: white; border-radius: 15px; margin-bottom: 2rem; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08); animation: fadeInUp 0.8s ease; animation-delay: 0.3s; animation-fill-mode: both;">
+          <button style="width: 100%; padding: 25px; background: #f8f9fa; border: none; border-bottom: 1px solid #eee; cursor: pointer; font-weight: 700; font-size: 1.05rem; color: #333; text-align: left; transition: all 0.3s ease; border-radius: 15px 15px 0 0; display: flex; justify-content: space-between; align-items: center;" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'; this.style.background = this.nextElementSibling.style.display === 'block' ? '#e8f5e9' : '#f8f9fa'">
+            <span>Is my data secure on WAStore?</span>
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div style="padding: 25px; display: none;">
+            <p style="color: #666; line-height: 1.8; margin: 0;">Yes! We use 256-bit SSL encryption, PCI DSS compliance, and multiple security layers to protect your data. We're certified ISO 27001 and comply with GDPR. Your data is encrypted both in transit and at rest.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Still Need Help -->
+      <div style="background: linear-gradient(135deg, rgba(37, 211, 102, 0.1) 0%, rgba(37, 211, 102, 0.05) 100%); padding: 60px; border-radius: 15px; text-align: center; margin-top: 60px; animation: fadeInUp 0.8s ease 0.4s both;">
+        <h3 style="font-size: 1.5rem; font-weight: 700; color: #333; margin-bottom: 1rem;">Still need help?</h3>
+        <p style="color: #666; margin-bottom: 2rem;">Can't find what you're looking for? Our support team is here to help!</p>
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+          <a href="/contact" style="padding: 12px 30px; background: #25D366; color: white; border: none; border-radius: 8px; font-weight: 600; text-decoration: none; display: inline-block; transition: all 0.3s ease;" onmouseover="this.style.background='#1ea854'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 5px 15px rgba(37, 211, 102, 0.3)'" onmouseout="this.style.background='#25D366'; this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+            Contact Support
+          </a>
+          <a href="https://wa.me/2348123456789" style="padding: 12px 30px; background: white; color: #25D366; border: 2px solid #25D366; border-radius: 8px; font-weight: 600; text-decoration: none; display: inline-block; transition: all 0.3s ease;" onmouseover="this.style.background='#e8f5e9'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 5px 15px rgba(37, 211, 102, 0.2)'" onmouseout="this.style.background='white'; this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+            Chat on WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <%- include('partials/footer') %>
+  <%- include('partials/scripts') %>
+</body>
+</html>

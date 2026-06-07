@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Features - WAStore | Sell on WhatsApp</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #25D366;
+      --dark-bg: #1a1a1a;
+      --light-text: #f5f5f5;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f8f9fa;
+      color: #333;
+    }
+
+    /* Navigation */
+    nav {
+      background: white;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      animation: slideInDown 0.5s ease;
+    }
+
+    .navbar-brand {
+      font-weight: 700;
+      color: var(--primary-color) !important;
+      font-size: 1.5rem;
+    }
+
+    .nav-link {
+      color: #333 !important;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--primary-color);
+      transition: width 0.3s ease;
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    .btn-primary {
+      background: var(--primary-color);
+      border: none;
+      color: white;
+      padding: 0.6rem 1.5rem;
+      border-radius: 25px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background: #1ea854;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
+    }
+
+    /* Hero Section */
+    .hero-section {
+      background: linear-gradient(135deg, #25D366 0%, #128C52 100%);
+      color: white;
+      padding: 60px 0;
+      text-align: center;
+      animation: fadeInUp 0.8s ease;
+    }
+
+    .hero-section h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .hero-section p {
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+      opacity: 0.95;
+    }
+
+    /* Features Section */
+    .features-section {
+      padding: 80px 0;
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 60px;
+      animation: fadeInUp 0.8s ease;
+    }
+
+    .section-title h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .section-title p {
+      font-size: 1.1rem;
+      color: #666;
+    }
+
+    .feature-box {
+      background: white;
+      border-radius: 15px;
+      padding: 40px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+      border: 1px solid rgba(37, 211, 102, 0.1);
+      animation: fadeInUp 0.8s ease;
+      animation-fill-mode: both;
+      height: 100%;
+    }
+
+    .feature-box:nth-child(1) { animation-delay: 0.1s; }
+    .feature-box:nth-child(2) { animation-delay: 0.2s; }
+    .feature-box:nth-child(3) { animation-delay: 0.3s; }
+    .feature-box:nth-child(4) { animation-delay: 0.1s; }
+    .feature-box:nth-child(5) { animation-delay: 0.2s; }
+    .feature-box:nth-child(6) { animation-delay: 0.3s; }
+
+    .feature-box:hover {
+      background: rgba(37, 211, 102, 0.02) !important;
+      border-color: rgba(37, 211, 102, 0.3) !important;
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(37, 211, 102, 0.1);
+    }
+
+    .feature-icon {
+      font-size: 2.5rem;
+      color: var(--primary-color);
+      margin-bottom: 1.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .feature-box:hover .feature-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .feature-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: #333;
+    }
+
+    .feature-description {
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+
+    .feature-benefits {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .feature-benefits li {
+      padding: 0.5rem 0;
+      color: #555;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .feature-benefits li:before {
+      content: '✓';
+      color: var(--primary-color);
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+
+    /* Integration Grid */
+    .integrations-section {
+      background: white;
+      padding: 80px 0;
+      border-top: 1px solid #eee;
+      border-bottom: 1px solid #eee;
+    }
+
+    .integration-item {
+      text-align: center;
+      padding: 30px;
+      border-radius: 10px;
+      background: #f8f9fa;
+      transition: all 0.3s ease;
+      animation: fadeInUp 0.8s ease;
+      animation-fill-mode: both;
+    }
+
+    .integration-item:nth-child(1) { animation-delay: 0.1s; }
+    .integration-item:nth-child(2) { animation-delay: 0.2s; }
+    .integration-item:nth-child(3) { animation-delay: 0.3s; }
+    .integration-item:nth-child(4) { animation-delay: 0.4s; }
+
+    .integration-item:hover {
+      background: rgba(37, 211, 102, 0.1);
+      transform: translateY(-10px);
+    }
+
+    .integration-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      color: var(--primary-color);
+    }
+
+    .integration-name {
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Footer */
+    footer {
+      background: var(--dark-bg);
+      color: white;
+      padding: 40px 0 20px;
+      margin-top: 60px;
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+
+    .footer-column h5 {
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: var(--primary-color);
+    }
+
+    .footer-link {
+      display: block;
+      color: #ccc;
+      text-decoration: none;
+      margin-bottom: 0.8rem;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .footer-link:hover {
+      color: var(--primary-color);
+      padding-left: 5px;
+    }
+
+    .footer-bottom {
+      border-top: 1px solid #333;
+      padding-top: 20px;
+      text-align: center;
+      color: #999;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero-section h1 {
+        font-size: 1.8rem;
+      }
+
+      .section-title h2 {
+        font-size: 1.8rem;
+      }
+
+      .feature-box {
+        padding: 25px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container">
+      <a class="navbar-brand" href="/">
+        <i class="fas fa-store"></i> WAStore
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/pricing">Pricing</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/features">Features</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/security">Security</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/auth/login" style="margin-left: 15px;">
+              <button class="btn btn-primary">Get Started</button>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container">
+      <h1>Powerful Features to Grow Your Business</h1>
+      <p>Everything you need to sell successfully on WhatsApp</p>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features-section">
+    <div class="container">
+      <div class="section-title">
+        <h2>Advanced Business Tools</h2>
+        <p>Built for merchants, powered by data</p>
+      </div>
+
+      <div class="row">
+        <!-- Real-time Analytics -->
+        <div class="col-md-6 col-lg-4 mb-4">
+          <div class="feature-box">
+            <div class="feature-icon">
+              <i class="fas fa-chart-line"></i>
+            </div>
+            <h3 class="feature-title">Real-time Analytics</h3>
+            <p class="feature-description">Track sales, customers, and performance metrics in real-time with interactive dashboards.</p>
+            <ul class="feature-benefits">
+              <li>Sales tracking</li>
+              <li>Customer insights</li>
+              <li>Revenue reports</li>
+              <li>Conversion metrics</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- API Access -->
+        <div class="col-md-6 col-lg-4 mb-4">
+          <div class="feature-box">
+            <div class="feature-icon">
+              <i class="fas fa-code"></i>
+            </div>
+            <h3 class="feature-title">Powerful API</h3>
+            <p class="feature-description">Integrate WAStore with your existing systems using our comprehensive REST API.</p>
+            <ul class="feature-benefits">
+              <li>Full API documentation</li>
+              <li>Webhook support</li>
+              <li>Custom integrations</li>
+              <li>Developer tools</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Team Management -->
+        <div class="col-md-6 col-lg-4 mb-4">
+          <div class="feature-box">
+            <div class="feature-icon">
+              <i class="fas fa-users"></i>
+            </div>
+            <h3 class="feature-title">Team Management</h3>
+            <p class="feature-description">Invite team members and manage roles and permissions with granular controls.</p>
+            <ul class="feature-benefits">
+              <li>Role-based access</li>
+              <li>Team collaboration</li>
+              <li>Activity logs</li>
+              <li>Permission control</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Multi-Language -->
+        <div class="col-md-6 col-lg-4 mb-4">
+          <div class="feature-box">
+            <div class="feature-icon">
+              <i class="fas fa-globe"></i>
+            </div>
+            <h3 class="feature-title">Multi-Language Support</h3>
+            <p class="feature-description">Reach customers in their language. Support for 20+ languages out of the box.</p>
+            <ul class="feature-benefits">
+              <li>Multi-currency support</li>
+              <li>Localized content</li>
+              <li>Auto-translation</li>
+              <li>Regional settings</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Growth Tools -->
+        <div class="col-md-6 col-lg-4 mb-4">
+          <div class="feature-box">
+            <div class="feature-icon">
+              <i class="fas fa-rocket"></i>
+            </div>
+            <h3 class="feature-title">Growth Tools</h3>
+            <p class="feature-description">Marketing automation, email campaigns, and customer loyalty programs built-in.</p>
+            <ul class="feature-benefits">
+              <li>Email campaigns</li>
+              <li>SMS marketing</li>
+              <li>Loyalty programs</li>
+              <li>Referral tracking</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Priority Support -->
+        <div class="col-md-6 col-lg-4 mb-4">
+          <div class="feature-box">
+            <div class="feature-icon">
+              <i class="fas fa-headset"></i>
+            </div>
+            <h3 class="feature-title">Priority Support</h3>
+            <p class="feature-description">Get help when you need it. Dedicated support team available 24/7 via WhatsApp.</p>
+            <ul class="feature-benefits">
+              <li>24/7 support</li>
+              <li>WhatsApp chat</li>
+              <li>Video tutorials</li>
+              <li>Knowledge base</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Additional Features Section -->
+  <section class="features-section" style="background: white;">
+    <div class="container">
+      <div class="section-title">
+        <h2>Smart Inventory & Orders</h2>
+        <p>Manage your products and orders efficiently</p>
+      </div>
+
+      <div class="row">
+        <!-- Product Management -->
+        <div class="col-md-6 mb-4">
+          <div style="padding: 30px;">
+            <h4 style="font-weight: 700; margin-bottom: 1.5rem; color: #333;">
+              <i class="fas fa-box" style="color: #25D366; margin-right: 0.5rem;"></i> Smart Product Management
+            </h4>
+            <ul style="list-style: none; padding: 0;">
+              <li style="padding: 0.8rem 0; border-bottom: 1px solid #eee;">
+                <strong>Product Variants:</strong> Multiple sizes, colors, and options
+              </li>
+              <li style="padding: 0.8rem 0; border-bottom: 1px solid #eee;">
+                <strong>Bulk Upload:</strong> Import thousands of products via CSV
+              </li>
+              <li style="padding: 0.8rem 0; border-bottom: 1px solid #eee;">
+                <strong>Categories:</strong> Organize products with unlimited categories
+              </li>
+              <li style="padding: 0.8rem 0; border-bottom: 1px solid #eee;">
+                <strong>Stock Tracking:</strong> Real-time inventory management
+              </li>
+              <li style="padding: 0.8rem 0;">
+                <strong>Image Gallery:</strong> Unlimited product images
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Order Management -->
+        <div class="col-md-6 mb-4">
+          <div style="padding: 30px;">
+            <h4 style="font-weight: 700; margin-bottom: 1.5rem; color: #333;">
+              <i class="fas fa-shopping-cart" style="color: #25D366; margin-right: 0.5rem;"></i> Order Fulfillment
+            </h4>
+            <ul style="list-style: none; padding: 0;">
+              <li style="padding: 0.8rem 0; border-bottom: 1px solid #eee;">
+                <strong>Order Tracking:</strong> Track orders from purchase to delivery
+              </li>
+              <li style="padding: 0.8rem 0; border-bottom: 1px solid #eee;">
+                <strong>Fulfillment:</strong> Automate shipping and delivery tracking
+              </li>
+              <li style="padding: 0.8rem 0; border-bottom: 1px solid #eee;">
+                <strong>Notifications:</strong> Auto-send order updates to customers
+              </li>
+              <li style="padding: 0.8rem 0; border-bottom: 1px solid #eee;">
+                <strong>Returns:</strong> Easy return and refund management
+              </li>
+              <li style="padding: 0.8rem 0;">
+                <strong>Batch Actions:</strong> Process multiple orders at once
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Integrations Section -->
+  <section class="integrations-section">
+    <div class="container">
+      <div class="section-title">
+        <h2>Seamless Integrations</h2>
+        <p>Connect with your favorite tools</p>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 col-lg-3 mb-4">
+          <div class="integration-item">
+            <div class="integration-icon">
+              <i class="fab fa-whatsapp"></i>
+            </div>
+            <div class="integration-name">WhatsApp Business</div>
+            <p style="color: #666; margin: 0;">Direct integration with WhatsApp Business API</p>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3 mb-4">
+          <div class="integration-item">
+            <div class="integration-icon">
+              <i class="fas fa-credit-card"></i>
+            </div>
+            <div class="integration-name">Paystack</div>
+            <p style="color: #666; margin: 0;">Accept payments securely</p>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3 mb-4">
+          <div class="integration-item">
+            <div class="integration-icon">
+              <i class="fas fa-envelope"></i>
+            </div>
+            <div class="integration-name">Email Marketing</div>
+            <p style="color: #666; margin: 0;">Mailchimp and SendGrid integration</p>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3 mb-4">
+          <div class="integration-item">
+            <div class="integration-icon">
+              <i class="fas fa-google"></i>
+            </div>
+            <div class="integration-name">Google Analytics</div>
+            <p style="color: #666; margin: 0;">Track analytics and conversions</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section style="background: linear-gradient(135deg, #25D366 0%, #128C52 100%); color: white; padding: 80px 0; text-align: center;">
+    <div class="container">
+      <h2 style="font-size: 2.5rem; margin-bottom: 1.5rem;">Ready to get started?</h2>
+      <p style="font-size: 1.1rem; margin-bottom: 2rem; opacity: 0.95;">Join thousands of merchants already selling on WAStore</p>
+      <button class="btn btn-light" style="padding: 12px 30px; font-weight: 600;" onclick="window.location.href='/auth/signup'">Start Free Today</button>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-column">
+          <h5>WAStore</h5>
+          <p>Sell smarter on WhatsApp with WAStore. Made in Ogbomoso, serving Africa.</p>
+        </div>
+        <div class="footer-column">
+          <h5>Product</h5>
+          <a href="/pricing" class="footer-link">Pricing</a>
+          <a href="/features" class="footer-link">Features</a>
+          <a href="/security" class="footer-link">Security</a>
+        </div>
+        <div class="footer-column">
+          <h5>Company</h5>
+          <a href="/" class="footer-link">About</a>
+          <a href="https://wa.me/2347046111023" class="footer-link">Contact</a>
+          <a href="/" class="footer-link">Blog</a>
+        </div>
+        <div class="footer-column">
+          <h5>Support</h5>
+          <a href="https://wa.me/2347046111023" class="footer-link">Help Center</a>
+          <a href="/" class="footer-link">Docs</a>
+          <a href="https://wa.me/2347046111023" class="footer-link">Chat with us</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 WAStore. All rights reserved. Made with <i class="fas fa-heart" style="color: #25D366;"></i> in Ogbomoso.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

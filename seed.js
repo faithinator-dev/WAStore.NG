@@ -22,7 +22,7 @@ const seedData = async () => {
       businessName: 'AutoVault Nigeria',
       ownerName: 'Olamide Motors',
       email: 'demo@autovault.ng',
-      phone: '2348123456789',
+      phone: '07046111023',
       slug: 'autovault',
       passwordHash: 'demo1234', // Will be hashed by pre-save
       storefront: {

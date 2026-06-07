@@ -1,0 +1,16 @@
+<!-- Hero Section -->
+<section class="hero-section" style="background: linear-gradient(135deg, #25D366 0%, #128C52 100%); color: white; padding: 60px 0; text-align: center; animation: fadeInUp 0.8s ease;">
+  <div class="container">
+    <h1 style="font-size: 2.5rem; font-weight: 700; margin-bottom: 1rem; animation: fadeInUp 0.8s ease;">
+      <%= heroTitle || 'Welcome to WAStore' %>
+    </h1>
+    <p style="font-size: 1.1rem; margin-bottom: 2rem; opacity: 0.95; animation: fadeInUp 0.8s ease 0.2s both;">
+      <%= heroSubtitle || 'Sell smarter on WhatsApp' %>
+    </p>
+    <% if (showHeroButton) { %>
+      <button class="btn btn-light" style="padding: 12px 30px; font-weight: 600; animation: fadeInUp 0.8s ease 0.4s both;" onclick="window.location.href='/auth/signup'">
+        <%= heroCTA || 'Get Started Free' %>
+      </button>
+    <% } %>
+  </div>
+</section>

@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Impact & Stats - WAStore | Sell on WhatsApp</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #25D366;
+      --dark-bg: #1a1a1a;
+      --light-text: #f5f5f5;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f8f9fa;
+      color: #333;
+    }
+
+    /* Navigation */
+    nav {
+      background: white;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      animation: slideInDown 0.5s ease;
+    }
+
+    .navbar-brand {
+      font-weight: 700;
+      color: var(--primary-color) !important;
+      font-size: 1.5rem;
+    }
+
+    .nav-link {
+      color: #333 !important;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--primary-color);
+      transition: width 0.3s ease;
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    .btn-primary {
+      background: var(--primary-color);
+      border: none;
+      color: white;
+      padding: 0.6rem 1.5rem;
+      border-radius: 25px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background: #1ea854;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
+    }
+
+    /* Hero Section */
+    .hero-section {
+      background: linear-gradient(135deg, #25D366 0%, #128C52 100%);
+      color: white;
+      padding: 60px 0;
+      text-align: center;
+      animation: fadeInUp 0.8s ease;
+    }
+
+    .hero-section h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .hero-section p {
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+      opacity: 0.95;
+    }
+
+    /* Stats Section */
+    .stats-section {
+      padding: 80px 0;
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 60px;
+      animation: fadeInUp 0.8s ease;
+    }
+
+    .section-title h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .section-title p {
+      font-size: 1.1rem;
+      color: #666;
+    }
+
+    /* Stat Card */
+    .stat-card {
+      background: white;
+      border-radius: 15px;
+      padding: 40px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+      text-align: center;
+      animation: fadeInUp 0.8s ease;
+      animation-fill-mode: both;
+    }
+
+    .stat-card:nth-child(1) { animation-delay: 0.1s; }
+    .stat-card:nth-child(2) { animation-delay: 0.2s; }
+    .stat-card:nth-child(3) { animation-delay: 0.3s; }
+    .stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+    .stat-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 40px rgba(37, 211, 102, 0.2);
+    }
+
+    .stat-icon {
+      font-size: 3rem;
+      color: var(--primary-color);
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .stat-card:hover .stat-value {
+      animation: none;
+    }
+
+    .stat-label {
+      font-size: 1.1rem;
+      color: #666;
+      font-weight: 600;
+    }
+
+    .stat-description {
+      color: #999;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+    }
+
+    /* Growth Metrics */
+    .growth-section {
+      background: white;
+      padding: 80px 0;
+      border-top: 1px solid #eee;
+    }
+
+    .metric-card {
+      background: linear-gradient(135deg, rgba(37, 211, 102, 0.1) 0%, rgba(37, 211, 102, 0.05) 100%);
+      border-radius: 15px;
+      padding: 30px;
+      margin-bottom: 2rem;
+      border-left: 4px solid var(--primary-color);
+      transition: all 0.3s ease;
+    }
+
+    .metric-card:hover {
+      background: linear-gradient(135deg, rgba(37, 211, 102, 0.15) 0%, rgba(37, 211, 102, 0.1) 100%);
+      transform: translateX(5px);
+    }
+
+    .metric-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .metric-title {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #333;
+    }
+
+    .metric-badge {
+      background: var(--primary-color);
+      color: white;
+      padding: 0.3rem 0.8rem;
+      border-radius: 5px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .metric-progress {
+      background: #eee;
+      height: 8px;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-bottom: 0.5rem;
+    }
+
+    .metric-bar {
+      background: linear-gradient(90deg, #25D366 0%, #1ea854 100%);
+      height: 100%;
+      border-radius: 5px;
+      animation: slideInLeft 0.8s ease;
+      animation-fill-mode: both;
+    }
+
+    .metric-footer {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: 0.5rem;
+    }
+
+    /* Success Stories */
+    .stories-section {
+      padding: 80px 0;
+      background: linear-gradient(135deg, rgba(37, 211, 102, 0.05) 0%, rgba(37, 211, 102, 0.02) 100%);
+    }
+
+    .story-card {
+      background: white;
+      border-radius: 15px;
+      padding: 40px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+      animation: fadeInUp 0.8s ease;
+      animation-fill-mode: both;
+    }
+
+    .story-card:nth-child(1) { animation-delay: 0.1s; }
+    .story-card:nth-child(2) { animation-delay: 0.2s; }
+    .story-card:nth-child(3) { animation-delay: 0.3s; }
+
+    .story-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(37, 211, 102, 0.15);
+    }
+
+    .story-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: var(--primary-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .story-name {
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 0.3rem;
+    }
+
+    .story-business {
+      color: #666;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    .story-text {
+      color: #555;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+      font-style: italic;
+    }
+
+    .story-result {
+      background: rgba(37, 211, 102, 0.1);
+      padding: 1rem;
+      border-radius: 10px;
+      border-left: 3px solid var(--primary-color);
+    }
+
+    .result-value {
+      font-weight: 700;
+      color: var(--primary-color);
+      font-size: 1.1rem;
+    }
+
+    .result-label {
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    /* Footer */
+    footer {
+      background: var(--dark-bg);
+      color: white;
+      padding: 40px 0 20px;
+      margin-top: 60px;
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+
+    .footer-column h5 {
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: var(--primary-color);
+    }
+
+    .footer-link {
+      display: block;
+      color: #ccc;
+      text-decoration: none;
+      margin-bottom: 0.8rem;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .footer-link:hover {
+      color: var(--primary-color);
+      padding-left: 5px;
+    }
+
+    .footer-bottom {
+      border-top: 1px solid #333;
+      padding-top: 20px;
+      text-align: center;
+      color: #999;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideInLeft {
+      from {
+        width: 0;
+      }
+      to {
+        width: 100%;
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero-section h1 {
+        font-size: 1.8rem;
+      }
+
+      .section-title h2 {
+        font-size: 1.8rem;
+      }
+
+      .stat-card {
+        padding: 25px;
+      }
+
+      .stat-value {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container">
+      <a class="navbar-brand" href="/">
+        <i class="fas fa-store"></i> WAStore
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/pricing">Pricing</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/features">Features</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/security">Security</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/auth/login" style="margin-left: 15px;">
+              <button class="btn btn-primary">Get Started</button>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container">
+      <h1>Impact By The Numbers</h1>
+      <p>See how WAStore is transforming African commerce</p>
+    </div>
+  </section>
+
+  <!-- Main Stats -->
+  <section class="stats-section">
+    <div class="container">
+      <div class="section-title">
+        <h2>Our Platform Impact</h2>
+        <p>Trusted by thousands of vendors across Africa</p>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 col-lg-3 mb-4">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-store"></i>
+            </div>
+            <div class="stat-value" id="storeCount">12,000+</div>
+            <div class="stat-label">Active Stores</div>
+            <div class="stat-description">Growing every day</div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3 mb-4">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-value" id="customerCount">5M+</div>
+            <div class="stat-label">Customers Served</div>
+            <div class="stat-description">Monthly active</div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3 mb-4">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-naira-sign"></i>
+            </div>
+            <div class="stat-value" id="processedValue">₦2.5B+</div>
+            <div class="stat-label">Processed Volume</div>
+            <div class="stat-description">In total transactions</div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3 mb-4">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="stat-value" id="uptime">99.9%</div>
+            <div class="stat-label">Platform Uptime</div>
+            <div class="stat-description">Always available</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Growth Metrics -->
+  <section class="growth-section">
+    <div class="container">
+      <div class="section-title">
+        <h2>Performance Metrics</h2>
+        <p>How merchants are growing on WAStore</p>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="metric-card">
+            <div class="metric-header">
+              <span class="metric-title">Average Order Value Growth</span>
+              <span class="metric-badge">+45%</span>
+            </div>
+            <div class="metric-progress">
+              <div class="metric-bar" style="width: 85%; animation-delay: 0.1s;"></div>
+            </div>
+            <div class="metric-footer">
+              <span>Starting Point: ₦15,000</span>
+              <span>Current: ₦21,750</span>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span class="metric-title">Customer Repeat Purchase Rate</span>
+              <span class="metric-badge">+62%</span>
+            </div>
+            <div class="metric-progress">
+              <div class="metric-bar" style="width: 78%; animation-delay: 0.2s;"></div>
+            </div>
+            <div class="metric-footer">
+              <span>First Purchase: 100%</span>
+              <span>Repeat: 62% within 30 days</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="metric-card">
+            <div class="metric-header">
+              <span class="metric-title">Monthly Revenue Increase</span>
+              <span class="metric-badge">+156%</span>
+            </div>
+            <div class="metric-progress">
+              <div class="metric-bar" style="width: 92%; animation-delay: 0.3s;"></div>
+            </div>
+            <div class="metric-footer">
+              <span>Month 1: ₦200,000</span>
+              <span>Month 6: ₦512,000</span>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span class="metric-title">Customer Acquisition Cost</span>
+              <span class="metric-badge">-68%</span>
+            </div>
+            <div class="metric-progress">
+              <div class="metric-bar" style="width: 65%; animation-delay: 0.4s;"></div>
+            </div>
+            <div class="metric-footer">
+              <span>Traditional: ₦5,000/customer</span>
+              <span>WAStore: ₦1,600/customer</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Success Stories -->
+  <section class="stories-section">
+    <div class="container">
+      <div class="section-title">
+        <h2>Success Stories</h2>
+        <p>Real vendors, real results</p>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 col-lg-4 mb-4">
+          <div class="story-card">
+            <div class="story-avatar">
+              <i class="fas fa-user"></i>
+            </div>
+            <div class="story-name">Chioma Adeyemi</div>
+            <div class="story-business">Fashion Boutique Owner</div>
+            <div class="story-text">"WAStore transformed my business. I went from doing 5 sales per week to 35. The WhatsApp integration is seamless!"</div>
+            <div class="story-result">
+              <div class="result-value">+600% Revenue</div>
+              <div class="result-label">In 4 months</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4 mb-4">
+          <div class="story-card">
+            <div class="story-avatar">
+              <i class="fas fa-user"></i>
+            </div>
+            <div class="story-name">Emeka Okonkwo</div>
+            <div class="story-business">Electronics Seller</div>
+            <div class="story-text">"The analytics dashboard helps me understand my customers better. I've been able to stock products they actually want."</div>
+            <div class="story-result">
+              <div class="result-value">+340% AOV</div>
+              <div class="result-label">Average Order Value</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4 mb-4">
+          <div class="story-card">
+            <div class="story-avatar">
+              <i class="fas fa-user"></i>
+            </div>
+            <div class="story-name">Zainab Ibrahim</div>
+            <div class="story-business">Cosmetics Retailer</div>
+            <div class="story-text">"The QR code feature lets customers share my store with their friends. Referrals now account for 40% of my sales!"</div>
+            <div class="story-result">
+              <div class="result-value">40% Referral</div>
+              <div class="result-label">New Customer Source</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="text-align: center; margin-top: 40px;">
+        <p style="color: #666; margin-bottom: 1rem;">Join thousands of successful merchants</p>
+        <button class="btn btn-primary" onclick="window.location.href='/auth/signup'" style="padding: 12px 30px;">Start Your Success Story</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Industry Insights -->
+  <section class="stats-section" style="background: white;">
+    <div class="container">
+      <div class="section-title">
+        <h2>Market Insights</h2>
+        <p>Why WAStore is the choice for African merchants</p>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-4">
+          <div style="background: #f8f9fa; padding: 30px; border-radius: 15px; border-left: 4px solid #25D366;">
+            <h4 style="font-weight: 700; margin-bottom: 1rem; color: #333;">
+              <i class="fas fa-mobile-alt" style="color: #25D366; margin-right: 0.5rem;"></i> Mobile-First Market
+            </h4>
+            <p style="color: #666; margin: 0; line-height: 1.6;">
+              73% of our users access WAStore via mobile. We've optimized every feature for mobile commerce, ensuring your store looks perfect on any device.
+            </p>
+          </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+          <div style="background: #f8f9fa; padding: 30px; border-radius: 15px; border-left: 4px solid #25D366;">
+            <h4 style="font-weight: 700; margin-bottom: 1rem; color: #333;">
+              <i class="fas fa-comment" style="color: #25D366; margin-right: 0.5rem;"></i> Social Commerce Leader
+            </h4>
+            <p style="color: #666; margin: 0; line-height: 1.6;">
+              WhatsApp is the preferred messaging app in Africa. We integrate seamlessly with WhatsApp Business to reach customers where they already are.
+            </p>
+          </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+          <div style="background: #f8f9fa; padding: 30px; border-radius: 15px; border-left: 4px solid #25D366;">
+            <h4 style="font-weight: 700; margin-bottom: 1rem; color: #333;">
+              <i class="fas fa-naira-sign" style="color: #25D366; margin-right: 0.5rem;"></i> Payment Solutions
+            </h4>
+            <p style="color: #666; margin: 0; line-height: 1.6;">
+              Paystack integration provides local payment processing. Accept payments in NGN with instant settlement to your bank account.
+            </p>
+          </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+          <div style="background: #f8f9fa; padding: 30px; border-radius: 15px; border-left: 4px solid #25D366;">
+            <h4 style="font-weight: 700; margin-bottom: 1rem; color: #333;">
+              <i class="fas fa-rocket" style="color: #25D366; margin-right: 0.5rem;"></i> Fastest Growing
+            </h4>
+            <p style="color: #666; margin: 0; line-height: 1.6;">
+              1,000+ new vendors join every month. WAStore is the fastest-growing commerce platform in Africa dedicated to WhatsApp sellers.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section style="background: linear-gradient(135deg, #25D366 0%, #128C52 100%); color: white; padding: 80px 0; text-align: center;">
+    <div class="container">
+      <h2 style="font-size: 2.5rem; margin-bottom: 1.5rem;">Ready to Grow Your Business?</h2>
+      <p style="font-size: 1.1rem; margin-bottom: 2rem; opacity: 0.95;">Join the fastest-growing WhatsApp commerce platform in Africa</p>
+      <button class="btn btn-light" style="padding: 12px 30px; font-weight: 600;" onclick="window.location.href='/auth/signup'">Start Free Today</button>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-column">
+          <h5>WAStore</h5>
+          <p>Sell smarter on WhatsApp with WAStore. Made in Lagos, serving Africa.</p>
+        </div>
+        <div class="footer-column">
+          <h5>Product</h5>
+          <a href="/pricing" class="footer-link">Pricing</a>
+          <a href="/features" class="footer-link">Features</a>
+          <a href="/security" class="footer-link">Security</a>
+        </div>
+        <div class="footer-column">
+          <h5>Company</h5>
+          <a href="/" class="footer-link">About</a>
+          <a href="https://wa.me/2348123456789" class="footer-link">Contact</a>
+          <a href="/" class="footer-link">Blog</a>
+        </div>
+        <div class="footer-column">
+          <h5>Support</h5>
+          <a href="https://wa.me/2348123456789" class="footer-link">Help Center</a>
+          <a href="/" class="footer-link">Docs</a>
+          <a href="https://wa.me/2348123456789" class="footer-link">Chat with us</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 WAStore. All rights reserved. Made with <i class="fas fa-heart" style="color: #25D366;"></i> in Lagos.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Counter animation
+    function animateCounter(element, target, duration = 2000) {
+      const increment = target / (duration / 16);
+      let current = 0;
+      const counter = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+          current = target;
+          clearInterval(counter);
+        }
+        element.textContent = Math.floor(current).toLocaleString();
+      }, 16);
+    }
+
+    // Animate on scroll
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const element = entry.target;
+          if (element.id === 'storeCount') animateCounter(element, 12000);
+          if (element.id === 'customerCount') element.textContent = '5M+';
+          if (element.id === 'processedValue') element.textContent = '₦2.5B+';
+          if (element.id === 'uptime') element.textContent = '99.9%';
+          observer.unobserve(element);
+        }
+      });
+    });
+
+    document.querySelectorAll('.stat-value').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>

@@ -200,6 +200,43 @@ app.get('/', (req, res) => {
   res.render('public/landing', { title: 'WaStore — Nigerian WhatsApp Commerce' });
 });
 
+// New Public Pages
+app.get('/pricing', (req, res) => {
+  res.render('public/pricing', { title: 'Pricing — WAStore | Sell on WhatsApp' });
+});
+
+app.get('/features', (req, res) => {
+  res.render('public/features', { title: 'Features — WAStore | Sell on WhatsApp' });
+});
+
+app.get('/security', (req, res) => {
+  res.render('public/security', { title: 'Security & Trust — WAStore | Sell on WhatsApp' });
+});
+
+app.get('/stats', (req, res) => {
+  res.render('public/stats', { title: 'Impact & Stats — WAStore | Sell on WhatsApp' });
+});
+
+app.get('/about', (req, res) => {
+  res.render('public/about', { title: 'About WAStore | Our Story & Mission' });
+});
+
+app.get('/contact', (req, res) => {
+  res.render('public/contact', { title: 'Contact Us — WAStore Support' });
+});
+
+app.get('/blog', (req, res) => {
+  res.render('public/blog', { title: 'Blog — WAStore News & Tips' });
+});
+
+app.get('/help-center', (req, res) => {
+  res.render('public/help', { title: 'Help Center — FAQs & Support' });
+});
+
+app.get('/docs', (req, res) => {
+  res.render('public/docs', { title: 'Documentation — WAStore API & Guides' });
+});
+
 // ── Error Handling ────────────────────────────────────────────────────────────
 app.use((req, res) => res.status(404).render('errors/404', { title: 'Not Found' }));
 app.use((err, req, res, next) => {
